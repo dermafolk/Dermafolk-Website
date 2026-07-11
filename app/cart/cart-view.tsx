@@ -3,7 +3,7 @@
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import { fallbackSettings } from "@/lib/data";
+import { type Settings } from "@/lib/types";
 import { resolveMediaUrl } from "@/lib/media";
 
 import { useCart } from "@/components/cart-provider";
@@ -12,9 +12,9 @@ function money(value: number) {
   return `₹${value}`;
 }
 
-export function CartView() {
+export function CartView({ settings }: { settings: Settings }) {
   const { items, subtotal, updateItem, removeItem } = useCart();
-  const shipping = fallbackSettings.shippingCharge;
+  const shipping = settings.shippingCharge;
   const total = subtotal + shipping;
 
   if (!items.length) {

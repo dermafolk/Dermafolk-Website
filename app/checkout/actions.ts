@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 
-import { fallbackSettings } from "@/lib/data";
+import { getSiteSettings } from "@/lib/data";
 import { createServerSupabaseClient } from "@/lib/supabase";
 import type { Order, OrderItem } from "@/lib/types";
 import { orderSchema } from "@/lib/validators";
@@ -43,7 +43,9 @@ export async function createCodOrder(
     };
   }
 
-  if (parsed.data.paymentMethod === "razorpay" && !fallbackSettings.razorpayEnabled) {
+  const settings = await getSiteSettings();
+
+  if (parsed.data.paymentMethod === "razorpay" && !settings.razorpayEnabled) {
     return {
       ok: false,
       message: "Razorpay is currently disabled.",
@@ -59,7 +61,7 @@ export async function createCodOrder(
   }>;
 
   const subtotal = cartItems.reduce((total, item) => total + item.price * item.qty, 0);
-  const shipping = fallbackSettings.shippingCharge;
+  const shipping = settings.shippingCharge;
   const total = subtotal + shipping;
   const orderId = crypto.randomUUID();
   const order: Order = {

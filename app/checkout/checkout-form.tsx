@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/components/cart-provider";
-import { fallbackSettings } from "@/lib/data";
+import { type Settings } from "@/lib/types";
 
 import { createCodOrder, type CheckoutActionState } from "./actions";
 
@@ -13,11 +13,11 @@ function money(value: number) {
   return `₹${value}`;
 }
 
-export function CheckoutForm() {
+export function CheckoutForm({ settings }: { settings: Settings }) {
   const router = useRouter();
   const { items, subtotal, clearCart } = useCart();
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "razorpay">("cod");
-  const shipping = fallbackSettings.shippingCharge;
+  const shipping = settings.shippingCharge;
   const total = subtotal + shipping;
   const [state, formAction, pending] = useActionState<CheckoutActionState, FormData>(createCodOrder, {
     ok: false,
@@ -81,15 +81,15 @@ export function CheckoutForm() {
                 />
                 Cash on Delivery
               </label>
-              <label style={{ display: "flex", gap: "10px", alignItems: "center", marginTop: "10px", opacity: fallbackSettings.razorpayEnabled ? 1 : 0.5 }}>
+              <label style={{ display: "flex", gap: "10px", alignItems: "center", marginTop: "10px", opacity: settings.razorpayEnabled ? 1 : 0.5 }}>
                 <input
                   type="radio"
                   name="payment"
                   checked={paymentMethod === "razorpay"}
                   onChange={() => setPaymentMethod("razorpay")}
-                  disabled={!fallbackSettings.razorpayEnabled}
+                  disabled={!settings.razorpayEnabled}
                 />
-                Razorpay {fallbackSettings.razorpayEnabled ? "" : "(disabled)"}
+                Razorpay {settings.razorpayEnabled ? "" : "(disabled)"}
               </label>
             </div>
 

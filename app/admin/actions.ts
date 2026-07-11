@@ -2,6 +2,7 @@
 
 import { getAdminSession } from "@/lib/admin-auth";
 import { createServerSupabaseClient } from "@/lib/supabase";
+import { uploadProductImage } from "@/lib/media";
 import {
   homepageSectionSchema,
   productInputSchema,
@@ -147,4 +148,120 @@ export async function saveSettingsAction(
   }
 
   return success("Settings saved.");
+}
+
+export async function deleteProductAction(
+  _prev: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  if (!(await requireAdminSession())) {
+    return failure("Admin session required.");
+  }
+
+  const id = String(formData.get("id") ?? "").trim();
+  if (!id) {
+    return failure("Product id is required.");
+  }
+
+  const supabase = createServerSupabaseClient();
+  if (!supabase) {
+    return failure("Database connection unavailable.");
+  }
+
+  const { error } = await supabase.from("products").delete().eq("id", id);
+  if (error) {
+    return failure(error.message);
+  }
+
+  return success("Product deleted.");
+}
+
+export async function markLeadHandledAction(
+  _prev: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  if (!(await requireAdminSession())) {
+    return failure("Admin session required.");
+  }
+
+  const id = String(formData.get("id") ?? "").trim();
+  if (!id) {
+    return failure("Lead id is required.");
+  }
+
+  const handledValue = String(formData.get("handled") ?? "");
+  const handled = handledValue === "true" || handledValue === "on";
+
+  const supabase = createServerSupabaseClient();
+  if (!supabase) {
+    return failure("Database connection unavailable.");
+  }
+
+  const { error } = await supabase
+    .from("contact_leads")
+    .update({ status: handled ? "handled" : "new" })
+    .eq("id", id);
+
+  if (error) {
+    return failure(error.message);
+  }
+
+  return success(handled ? "Lead marked handled." : "Lead marked unhandled.");
+}
+
+export async function updateOrderStatusAction(
+  _prev: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  if (!(await requireAdminSession())) {
+    return failure("Admin session required.");
+  }
+
+  const id = String(formData.get("id") ?? "").trim();
+  const status = String(formData.get("status") ?? "").trim();
+
+  if (!id) {
+    return failure("Order id is required.");
+  }
+
+  const allowed = ["placed", "fulfilled", "cancelled"] as const;
+  if (!allowed.includes(status as (typeof allowed)[number])) {
+    return failure("Invalid order status.");
+  }
+
+  const supabase = createServerSupabaseClient();
+  if (!supabase) {
+    return failure("Database connection unavailable.");
+  }
+
+  const { error } = await supabase
+    .from("orders")
+    .update({ order_status: status })
+    .eq("id", id);
+
+  if (error) {
+    return failure(error.message);
+  }
+
+  return success("Order status updated.");
+}
+
+export async function uploadImageAction(
+  formData: FormData,
+): Promise<{ url?: string; error?: string }> {
+  if (!(await requireAdminSession())) {
+    return { error: "Admin session required." };
+  }
+
+  const file = formData.get("file");
+  if (!file || typeof file === "string") {
+    return { error: "No file provided." };
+  }
+
+  try {
+    const url = await uploadProductImage(file as File);
+    return { url };
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : "Upload failed." };
+  }
 }

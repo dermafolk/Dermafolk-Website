@@ -3,9 +3,10 @@
 import { type HTMLAttributes, type ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { type Product } from "@/lib/types";
+
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/components/cart-provider";
-import { fallbackProducts } from "@/lib/data";
 import { resolveMediaUrl } from "@/lib/media";
 import { SiteShell } from "@/components/site-shell";
 
@@ -20,12 +21,12 @@ type DetailItem = {
   content: ReactNode;
 };
 
-const product = fallbackProducts[0];
-const galleryImages: GalleryImage[] = product.images.map((image, index) => ({
-  src: image.src,
-  alt: image.alt,
-  label: index === 0 ? "View product photo" : index === 1 ? "View lifestyle photo" : "View styled photo",
-}));
+const galleryImagesFor = (product: Product): GalleryImage[] =>
+  product.images.map((image, index) => ({
+    src: image.src,
+    alt: image.alt,
+    label: index === 0 ? "View product photo" : index === 1 ? "View lifestyle photo" : "View styled photo",
+  }));
 
 const details: DetailItem[] = [
   {
@@ -67,7 +68,7 @@ function MaterialIcon({
   );
 }
 
-function PriceLine() {
+function PriceLine({ product }: { product: Product }) {
   return (
     <div className="price-line">
       <span className="mrp">₹{product.mrp}</span>
@@ -89,7 +90,8 @@ function Stars() {
   );
 }
 
-export function ProductPage() {
+export function ProductPage({ product }: { product: Product }) {
+  const galleryImages = galleryImagesFor(product);
   const [selectedImage, setSelectedImage] = useState(galleryImages[0]);
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
@@ -141,7 +143,7 @@ export function ProductPage() {
               <Stars />
               <span>4.8 · 9,800 reviews</span>
             </div>
-            <PriceLine />
+            <PriceLine product={product} />
             <p className="desc">{product.description}</p>
             <ul className="product-facts">
               <li><MaterialIcon>science</MaterialIcon> 5 active ingredients, clinically dosed</li>

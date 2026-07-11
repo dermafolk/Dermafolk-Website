@@ -3,6 +3,7 @@
 import { type HTMLAttributes, useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { type HomepageSection } from "@/lib/types";
 import { SiteShell } from "@/components/site-shell";
 
 type Review = {
@@ -250,9 +251,16 @@ function ReviewModal({
   );
 }
 
-export function LandingPage() {
+const heroTitleFallback = "Brighter, calmer skin in one honest step.";
+const heroBodyFallback =
+  "Glutathione, niacinamide and mandelic acid, in a single fragrance-free serum built to even tone and soften texture - without the ten-step routine.";
+
+export function LandingPage({ hero }: { hero?: HomepageSection }) {
   const [reviewOpen, setReviewOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  const heroTitle = hero?.title || heroTitleFallback;
+  const heroBody = hero?.body || heroBodyFallback;
 
   return (
     <SiteShell>
@@ -260,8 +268,8 @@ export function LandingPage() {
         <img src="/banner-image.webp" alt="Dermafolk product bottle styled with plant shadows and aloe vera" />
         <div className="content">
           <div className="kicker">Dermafolk - One Bottle Renewal</div>
-          <h1>Brighter, calmer skin in one honest step.</h1>
-          <p>Glutathione, niacinamide and mandelic acid, in a single fragrance-free serum built to even tone and soften texture - without the ten-step routine.</p>
+          <h1>{heroTitle}</h1>
+          <p>{heroBody}</p>
           <PriceLine />
           <div className="hero-actions">
             <Button asChild className="btn btn-primary">

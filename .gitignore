@@ -10,3 +10,6 @@ yarn-error.log*
 pnpm-debug.log*
 
 .env
+
+# Local agent/runtime state (not project source)
+.claude-flow/
