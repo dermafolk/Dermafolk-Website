@@ -13,3 +13,6 @@ pnpm-debug.log*
 
 # Local agent/runtime state (not project source)
 .claude-flow/
+
+# TypeScript incremental build cache
+*.tsbuildinfo
