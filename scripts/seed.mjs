@@ -69,9 +69,9 @@ const product = {
   mrp: 799,
   discount_percent: 38,
   images: [
-    { src: "/product-image.webp", alt: "Dermafolk product bottle on a stone tray" },
-    { src: "/lady-using-product.webp", alt: "Woman applying Dermafolk serum" },
-    { src: "/banner-image.webp", alt: "Dermafolk product bottle styled with plant shadows" },
+    { src: "/assets/product-image.webp", alt: "Dermafolk product bottle on a stone tray" },
+    { src: "/assets/lady-using-product.webp", alt: "Woman applying Dermafolk serum" },
+    { src: "/assets/banner-image.webp", alt: "Dermafolk product bottle styled with plant shadows" },
   ],
   active: true,
   category: null,

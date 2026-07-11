@@ -12,9 +12,9 @@ export const fallbackProducts: Product[] = [
     mrp: 799,
     discountPercent: 38,
     images: [
-      { src: "/product-image.webp", alt: "Dermafolk product bottle on a stone tray with a folded towel and aloe vera" },
-      { src: "/lady-using-product.webp", alt: "Woman applying Dermafolk serum during her morning routine" },
-      { src: "/banner-image.webp", alt: "Dermafolk product bottle styled with plant shadows and aloe vera" },
+      { src: "/assets/product-image.webp", alt: "Dermafolk product bottle on a stone tray with a folded towel and aloe vera" },
+      { src: "/assets/lady-using-product.webp", alt: "Woman applying Dermafolk serum during her morning routine" },
+      { src: "/assets/banner-image.webp", alt: "Dermafolk product bottle styled with plant shadows and aloe vera" },
     ],
     active: true,
   },

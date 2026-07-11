@@ -933,7 +933,7 @@ header {
   display: flex;
   align-items: center;
   overflow: hidden;
-  background-image: url("/banner-image.webp");
+  background-image: url("/assets/banner-image.webp");
   background-size: cover;
   background-position: center;
   background-attachment: fixed;

@@ -265,7 +265,7 @@ export function LandingPage({ hero }: { hero?: HomepageSection }) {
   return (
     <SiteShell>
       <section className="hero-banner">
-        <img src="/banner-image.webp" alt="Dermafolk product bottle styled with plant shadows and aloe vera" />
+        <img src="/assets/banner-image.webp" alt="Dermafolk product bottle styled with plant shadows and aloe vera" />
         <div className="content">
           <div className="kicker">Dermafolk - One Bottle Renewal</div>
           <h1>{heroTitle}</h1>
@@ -298,7 +298,7 @@ export function LandingPage({ hero }: { hero?: HomepageSection }) {
       <section className="product-section section-pad" id="product">
         <div className="wrap product-grid">
           <div className="product-visual">
-            <img src="/product-image.webp" alt="Dermafolk product bottle on a stone tray with a folded towel and aloe vera" />
+            <img src="/assets/product-image.webp" alt="Dermafolk product bottle on a stone tray with a folded towel and aloe vera" />
             <div className="price-tag">
               <span className="mrp">₹799</span>
               <span className="amt">₹495</span>
@@ -333,7 +333,7 @@ export function LandingPage({ hero }: { hero?: HomepageSection }) {
       <section className="split" id="about">
         <div className="wrap split-grid">
           <div className="img-col">
-            <img src="/product-image.webp" alt="Dermafolk product bottle on a stone tray with a folded towel and aloe vera" />
+            <img src="/assets/product-image.webp" alt="Dermafolk product bottle on a stone tray with a folded towel and aloe vera" />
           </div>
           <div className="text-col">
             <div className="inner">
@@ -382,7 +382,7 @@ export function LandingPage({ hero }: { hero?: HomepageSection }) {
             </div>
           </div>
           <div className="ritual-img">
-            <img src="/lady-using-product.webp" alt="Woman applying Dermafolk serum during her morning routine" />
+            <img src="/assets/lady-using-product.webp" alt="Woman applying Dermafolk serum during her morning routine" />
           </div>
         </div>
       </section>

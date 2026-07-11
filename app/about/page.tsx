@@ -29,7 +29,7 @@ export default function AboutPage() {
             </div>
           </div>
           <div className="img-col">
-            <img src="/banner-image.webp" alt="Dermafolk product bottle styled with plant shadows and aloe vera" />
+            <img src="/assets/banner-image.webp" alt="Dermafolk product bottle styled with plant shadows and aloe vera" />
           </div>
         </div>
       </section>
