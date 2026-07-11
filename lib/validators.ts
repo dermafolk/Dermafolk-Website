@@ -25,9 +25,10 @@ export const homepageSectionSchema = z.object({
 });
 
 export const contactLeadSchema = z.object({
-  name: z.string().trim().min(2),
+  firstName: z.string().trim().min(2),
+  lastName: z.string().trim().min(2),
   email: z.string().trim().email(),
-  subject: z.string().trim().max(160).optional().or(z.literal("")),
+  phone: z.string().trim().min(7),
   message: z.string().trim().min(10),
 });
 

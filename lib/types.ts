@@ -21,6 +21,7 @@ export type ContactLead = {
   id: string;
   name: string;
   email: string;
+  phone?: string;
   subject?: string;
   message: string;
   status: "new" | "handled";

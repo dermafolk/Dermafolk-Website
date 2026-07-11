@@ -158,6 +158,7 @@ export async function getContactLeads(): Promise<ContactLead[]> {
       id: row.id,
       name: row.name,
       email: row.email,
+      phone: row.phone ?? undefined,
       subject: row.subject ?? undefined,
       message: row.message,
       status: row.status,

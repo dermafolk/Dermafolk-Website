@@ -122,30 +122,14 @@ function TrustIcons() {
 function ReviewModal({
   open,
   onClose,
+  onAddReview,
 }: {
   open: boolean;
   onClose: () => void;
+  onAddReview: (review: Review) => void;
 }) {
   const [rating, setRating] = useState(5);
   const [reviewForm, setReviewForm] = useState({ name: "", city: "", text: "" });
-  const [reviews, setReviews] = useState<Review[]>(reviewsSeed);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [visibleCount, setVisibleCount] = useState(3);
-  const [touchStartX, setTouchStartX] = useState(0);
-
-  useEffect(() => {
-    const updateVisibleCount = () => setVisibleCount(window.innerWidth > 900 ? 3 : 1);
-    updateVisibleCount();
-    window.addEventListener("resize", updateVisibleCount);
-    return () => window.removeEventListener("resize", updateVisibleCount);
-  }, []);
-
-  const maxIndex = Math.max(0, reviews.length - visibleCount);
-  const slidePercent = 100 / visibleCount;
-
-  useEffect(() => {
-    setCurrentIndex((value) => Math.min(value, maxIndex));
-  }, [maxIndex]);
 
   const addReview = () => {
     const nextReview: Review = {
@@ -155,18 +139,10 @@ function ReviewModal({
       rating,
     };
 
-    setReviews((items) => [...items, nextReview]);
-    setCurrentIndex(Math.max(0, reviews.length + 1 - visibleCount));
+    onAddReview(nextReview);
     setReviewForm({ name: "", city: "", text: "" });
     setRating(5);
     onClose();
-  };
-
-  const moveCarousel = (direction: "prev" | "next") => {
-    setCurrentIndex((value) => {
-      if (direction === "prev") return Math.max(0, value - 1);
-      return Math.min(maxIndex, value + 1);
-    });
   };
 
   return (
@@ -206,47 +182,76 @@ function ReviewModal({
           <textarea rows={4} placeholder="Tell us how Dermafolk worked for you..." value={reviewForm.text} onChange={(event) => setReviewForm((form) => ({ ...form, text: event.target.value }))} />
         </div>
         <Button className="btn btn-primary modal-submit" onClick={addReview}>Submit Review</Button>
+      </div>
+    </div>
+  );
+}
 
-        <div className="carousel" style={{ marginTop: "30px" }}>
-          <Button className="car-arrow" aria-label="Previous reviews" onClick={() => moveCarousel("prev")} disabled={currentIndex <= 0}>
-            <MaterialIcon>chevron_left</MaterialIcon>
-          </Button>
-          <div className="car-viewport">
-            <div
-              className="car-track"
-              style={{ transform: `translateX(-${currentIndex * slidePercent}%)` }}
-              onTouchStart={(event) => setTouchStartX(event.touches[0].clientX)}
-              onTouchEnd={(event) => {
-                const diff = touchStartX - event.changedTouches[0].clientX;
-                if (Math.abs(diff) > 40) {
-                  moveCarousel(diff > 0 ? "next" : "prev");
-                }
-              }}
-            >
-              {reviews.map((review, index) => (
-                <div key={`${review.name}-${review.city}-${index}`} className="review-slide" style={{ flexBasis: `${slidePercent}%`, maxWidth: `${slidePercent}%` }}>
-                  <div className="testi-card">
-                    <Stars rating={review.rating} />
-                    <p>&quot;{review.text}&quot;</p>
-                    <div className="testi-top" style={{ marginTop: "20px", marginBottom: 0 }}>
-                      <div style={{ width: "48px", height: "48px", borderRadius: "50%", background: "var(--mauve-light)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 600, color: "var(--clay-dark)" }}>
-                        {review.name.charAt(0).toUpperCase()}
-                      </div>
-                      <div>
-                        <div className="testi-name">{review.name}</div>
-                        <div className="testi-loc">Verified buyer, {review.city}</div>
-                      </div>
-                    </div>
+function ReviewsCarousel({ reviews }: { reviews: Review[] }) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(3);
+  const [touchStartX, setTouchStartX] = useState(0);
+
+  useEffect(() => {
+    const updateVisibleCount = () => setVisibleCount(window.innerWidth > 900 ? 3 : 1);
+    updateVisibleCount();
+    window.addEventListener("resize", updateVisibleCount);
+    return () => window.removeEventListener("resize", updateVisibleCount);
+  }, []);
+
+  const maxIndex = Math.max(0, reviews.length - visibleCount);
+  const slidePercent = 100 / visibleCount;
+
+  useEffect(() => {
+    setCurrentIndex((value) => Math.min(value, maxIndex));
+  }, [maxIndex]);
+
+  const moveCarousel = (direction: "prev" | "next") => {
+    setCurrentIndex((value) => {
+      if (direction === "prev") return Math.max(0, value - 1);
+      return Math.min(maxIndex, value + 1);
+    });
+  };
+
+  return (
+    <div className="carousel">
+      <Button className="car-arrow" aria-label="Previous reviews" onClick={() => moveCarousel("prev")} disabled={currentIndex <= 0}>
+        <MaterialIcon>chevron_left</MaterialIcon>
+      </Button>
+      <div className="car-viewport">
+        <div
+          className="car-track"
+          style={{ transform: `translateX(-${currentIndex * slidePercent}%)` }}
+          onTouchStart={(event) => setTouchStartX(event.touches[0].clientX)}
+          onTouchEnd={(event) => {
+            const diff = touchStartX - event.changedTouches[0].clientX;
+            if (Math.abs(diff) > 40) {
+              moveCarousel(diff > 0 ? "next" : "prev");
+            }
+          }}
+        >
+          {reviews.map((review, index) => (
+            <div key={`${review.name}-${review.city}-${index}`} className="review-slide" style={{ flexBasis: `${slidePercent}%`, maxWidth: `${slidePercent}%` }}>
+              <div className="testi-card">
+                <Stars rating={review.rating} />
+                <p>&quot;{review.text}&quot;</p>
+                <div className="testi-top" style={{ marginTop: "20px", marginBottom: 0 }}>
+                  <div style={{ width: "48px", height: "48px", borderRadius: "50%", background: "var(--mauve-light)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 600, color: "var(--clay-dark)" }}>
+                    {review.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <div className="testi-name">{review.name}</div>
+                    <div className="testi-loc">Verified buyer, {review.city}</div>
                   </div>
                 </div>
-              ))}
+              </div>
             </div>
-          </div>
-          <Button className="car-arrow" aria-label="Next reviews" onClick={() => moveCarousel("next")} disabled={currentIndex >= maxIndex}>
-            <MaterialIcon>chevron_right</MaterialIcon>
-          </Button>
+          ))}
         </div>
       </div>
+      <Button className="car-arrow" aria-label="Next reviews" onClick={() => moveCarousel("next")} disabled={currentIndex >= maxIndex}>
+        <MaterialIcon>chevron_right</MaterialIcon>
+      </Button>
     </div>
   );
 }
@@ -257,6 +262,7 @@ const heroBodyFallback =
 
 export function LandingPage({ hero }: { hero?: HomepageSection }) {
   const [reviewOpen, setReviewOpen] = useState(false);
+  const [reviews, setReviews] = useState<Review[]>(reviewsSeed);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const heroTitle = hero?.title || heroTitleFallback;
@@ -396,6 +402,7 @@ export function LandingPage({ hero }: { hero?: HomepageSection }) {
               <MaterialIcon className="!text-[18px]">rate_review</MaterialIcon> Write a Review
             </Button>
           </div>
+          <ReviewsCarousel reviews={reviews} />
         </div>
       </section>
 
@@ -435,7 +442,11 @@ export function LandingPage({ hero }: { hero?: HomepageSection }) {
         </div>
       </section>
 
-      <ReviewModal open={reviewOpen} onClose={() => setReviewOpen(false)} />
+      <ReviewModal
+        open={reviewOpen}
+        onClose={() => setReviewOpen(false)}
+        onAddReview={(review) => setReviews((items) => [...items, review])}
+      />
     </SiteShell>
   );
 }

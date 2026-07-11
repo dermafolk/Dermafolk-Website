@@ -36,6 +36,12 @@ export function LeadRow({ lead }: { lead: ContactLead }) {
           <p style={{ fontWeight: 600, marginTop: 4 }}>{lead.name}</p>
           <div className="admin-kicker" style={{ marginTop: 12 }}>Email</div>
           <p className="desc" style={{ marginTop: 4 }}>{lead.email}</p>
+          {lead.phone ? (
+            <>
+              <div className="admin-kicker" style={{ marginTop: 12 }}>Phone</div>
+              <p className="desc" style={{ marginTop: 4 }}>{lead.phone}</p>
+            </>
+          ) : null}
           {lead.subject ? (
             <>
               <div className="admin-kicker" style={{ marginTop: 12 }}>Subject</div>

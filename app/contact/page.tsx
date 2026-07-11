@@ -11,20 +11,64 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <SiteShell>
-      <section className="section-pad">
+      <section className="contact-page section-pad">
         <div className="wrap">
-          <div className="kicker">Contact</div>
-          <h1 style={{ fontSize: "clamp(34px,5vw,58px)", lineHeight: 1.05, marginBottom: "18px", maxWidth: "720px" }}>
-            Reach out about the serum, support, or future orders.
-          </h1>
-          <div className="split-grid" style={{ marginTop: "46px" }}>
-            <div className="text-col">
-              <div className="inner">
-                <p className="desc">Use this form for customer support, order questions, wholesale enquiries, or general feedback.</p>
-                <p className="desc">Messages submit through Supabase when credentials are available, with a local fallback for development.</p>
+          <div className="contact-card">
+            <div className="contact-card-left">
+              <div className="contact-glow" aria-hidden="true" />
+              <div className="contact-left-inner">
+                <h2 className="contact-heading">Get in Touch</h2>
+                <p className="contact-lede">
+                  We'd love to hear from you. Whether it's a question about sizing or a custom order, we're here to help.
+                </p>
+
+                <div className="contact-info-block">
+                  <span className="contact-icon-ring" aria-hidden="true">
+                    <span className="msi">mail</span>
+                  </span>
+                  <div>
+                    <div className="contact-info-label">Email Us</div>
+                    <a className="contact-info-value" href="mailto:dermafolk1@gmail.com">
+                      dermafolk1@gmail.com
+                    </a>
+                  </div>
+                </div>
+
+                <div className="contact-info-block">
+                  <span className="contact-icon-ring" aria-hidden="true">
+                    <span className="msi">call</span>
+                  </span>
+                  <div>
+                    <div className="contact-info-label">WhatsApp / Call</div>
+                    <a className="contact-info-value" href="tel:+918446082893">
+                      +918446082893
+                    </a>
+                  </div>
+                </div>
+
+                <div className="contact-divider" />
+
+                <div className="contact-location-section">
+                  <div className="contact-info-label">Studio Location</div>
+                  <div className="contact-location-text">Nanded, MH, India</div>
+                  <div className="contact-map">
+                    <iframe
+                      title="Studio location map"
+                      src="https://www.google.com/maps?q=19.1531527,77.327648&z=17&hl=en&output=embed"
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
-            <ContactForm />
+
+            <div className="contact-card-right">
+              <div className="contact-right-inner">
+                <h2 className="contact-form-title">Send a Message</h2>
+                <ContactForm />
+              </div>
+            </div>
           </div>
         </div>
       </section>

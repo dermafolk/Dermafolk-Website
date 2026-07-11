@@ -22,19 +22,48 @@ export function ContactForm() {
   }, [state.ok]);
 
   return (
-    <form ref={formRef} className="modal-card" style={{ maxWidth: "none" }} action={formAction}>
-      <div className="field"><label>Name</label><input name="name" type="text" placeholder="Your name" /></div>
-      <div className="field"><label>Email</label><input name="email" type="email" placeholder="you@example.com" /></div>
-      <div className="field"><label>Subject</label><input name="subject" type="text" placeholder="How can we help?" /></div>
-      <div className="field"><label>Message</label><textarea name="message" rows={5} placeholder="Write your message..." /></div>
+    <form ref={formRef} className="contact-form" action={formAction}>
+      <div className="contact-form-row">
+        <div className="contact-underline-field">
+          <label>First Name</label>
+          <input name="firstName" type="text" placeholder="John" autoComplete="given-name" />
+        </div>
+        <div className="contact-underline-field">
+          <label>Last Name</label>
+          <input name="lastName" type="text" placeholder="Doe" autoComplete="family-name" />
+        </div>
+      </div>
+
+      <div className="contact-form-row">
+        <div className="contact-underline-field">
+          <label>Email Address</label>
+          <input name="email" type="email" placeholder="you@example.com" autoComplete="email" />
+        </div>
+        <div className="contact-underline-field">
+          <label>Phone Number</label>
+          <input name="phone" type="tel" placeholder="+91 00000 00000" autoComplete="tel" />
+        </div>
+      </div>
+
+      <div className="contact-underline-field">
+        <label>Your Message</label>
+        <textarea name="message" rows={6} placeholder="Write your message..." />
+      </div>
+
       {state.message ? (
-        <p className="desc" style={{ marginBottom: "12px", color: state.ok ? "var(--ink)" : "var(--accent)" }}>
+        <p
+          className="contact-foot-note"
+          style={{ color: state.ok ? "var(--forest)" : "var(--accent)" }}
+        >
           {state.message}
         </p>
       ) : null}
-      <Button className="btn btn-primary modal-submit" type="submit" disabled={pending}>
+
+      <Button className="contact-submit" type="submit" disabled={pending}>
         {pending ? "Sending..." : "Send Message"}
       </Button>
+
+      <p className="contact-foot-note">Your message will be sent securely to our team.</p>
     </form>
   );
 }

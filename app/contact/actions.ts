@@ -13,9 +13,10 @@ export async function submitContactLead(
   formData: FormData,
 ): Promise<ContactFormState> {
   const parsed = contactLeadSchema.safeParse({
-    name: formData.get("name"),
+    firstName: formData.get("firstName"),
+    lastName: formData.get("lastName"),
     email: formData.get("email"),
-    subject: formData.get("subject"),
+    phone: formData.get("phone"),
     message: formData.get("message"),
   });
 
@@ -26,12 +27,14 @@ export async function submitContactLead(
     };
   }
 
+  const fullName = `${parsed.data.firstName} ${parsed.data.lastName}`.trim();
+
   const supabase = createServerSupabaseClient();
   if (supabase) {
     const { error } = await supabase.from("contact_leads").insert({
-      name: parsed.data.name,
+      name: fullName,
       email: parsed.data.email,
-      subject: parsed.data.subject || null,
+      phone: parsed.data.phone,
       message: parsed.data.message,
       status: "new",
     });
