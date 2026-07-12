@@ -1,10 +1,13 @@
 "use client";
 
 import { type HTMLAttributes, useEffect, useState } from "react";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { type HomepageSection } from "@/lib/types";
 import { SiteShell } from "@/components/site-shell";
+import { useCart } from "@/components/cart-provider";
+import { fallbackProducts } from "@/lib/data";
 
 type Review = {
   name: string;
@@ -264,6 +267,8 @@ export function LandingPage({ hero }: { hero?: HomepageSection }) {
   const [reviewOpen, setReviewOpen] = useState(false);
   const [reviews, setReviews] = useState<Review[]>(reviewsSeed);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const { addItem } = useCart();
+  const defaultProduct = fallbackProducts[0];
 
   const heroTitle = hero?.title || heroTitleFallback;
   const heroBody = hero?.body || heroBodyFallback;
@@ -278,11 +283,17 @@ export function LandingPage({ hero }: { hero?: HomepageSection }) {
           <p>{heroBody}</p>
           <PriceLine />
           <div className="hero-actions">
-            <Button asChild className="btn btn-primary">
-              <a href="#buy">Buy Now - ₹495</a>
+            <Button
+              className="btn btn-primary"
+              type="button"
+              onClick={() => {
+                addItem(defaultProduct, 1, { type: "buynow", openPopup: true });
+              }}
+            >
+              Buy Now - ₹495
             </Button>
             <Button asChild className="btn btn-outline on-dark">
-              <a href="/shop">View Product</a>
+              <Link href="/shop">View Product</Link>
             </Button>
           </div>
         </div>
@@ -326,8 +337,14 @@ export function LandingPage({ hero }: { hero?: HomepageSection }) {
               <Button asChild className="btn btn-outline">
                 <a href="/shop">View Now</a>
               </Button>
-              <Button asChild className="btn btn-primary">
-                <a href="#buy">Buy Now - ₹495</a>
+              <Button
+                className="btn btn-primary"
+                type="button"
+                onClick={() => {
+                  addItem(defaultProduct, 1, { type: "buynow", openPopup: true });
+                }}
+              >
+                Buy Now - ₹495
               </Button>
             </div>
           </div>
@@ -436,8 +453,14 @@ export function LandingPage({ hero }: { hero?: HomepageSection }) {
             <h2>45 days to fall in love with one bottle.</h2>
             <p>Free pan-India shipping on every order, and a full refund if it isn&apos;t the last face wash you ever buy.</p>
             <PriceLine />
-            <Button asChild className="btn btn-primary">
-              <a href="/shop">Buy Now - ₹495</a>
+            <Button
+              className="btn btn-primary"
+              type="button"
+              onClick={() => {
+                addItem(defaultProduct, 1, { type: "buynow", openPopup: true });
+              }}
+            >
+              Buy Now - ₹495
             </Button>
           </div>
         </div>

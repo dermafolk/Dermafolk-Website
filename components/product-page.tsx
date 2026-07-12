@@ -48,7 +48,7 @@ const details: DetailItem[] = [
   {
     title: "Full Ingredient List",
     content:
-      "Aqua, Glycerin, Niacinamide (3%), Glutathione (2%), Mandelic Acid (1%), Aloe Barbadensis Leaf Juice (1%), Pentylene Glycol, Xanthan Gum, Sodium Hyaluronate, Panthenol, Tocopherol, Citric Acid, Sodium Benzoate, Potassium Sorbate. Free from parabens, sulfates, synthetic fragrance, mineral oil and silicones.",
+      "Aqua, Sodium lauroyl Sarcosinate, Acrylates Crosspolymer-2, D-Glucoside, Glycerin, Niacinamide, Ascorbyl Glucoside, White Beads, Mandelic Acid, Aloe Barbadensis Leaf Extract, Betaine, Sodium Hyaluronate, Glutathione, Pentavitin, Inulin, Ceramide Complex, Ethylhexylglycerin, Allantoin, Diethanolamine, Beta-Arbutin, Sodium Gluconate, Copper Peptide Solution.",
   },
   {
     title: "Shipping & Returns",
@@ -167,7 +167,7 @@ export function ProductPage({ product }: { product: Product }) {
                   className="btn btn-outline"
                   type="button"
                   onClick={() => {
-                    addItem(product, quantity);
+                    addItem(product, quantity, { type: "bag", openPopup: true });
                     setAdded(true);
                   }}
                 >
@@ -177,8 +177,7 @@ export function ProductPage({ product }: { product: Product }) {
                   className="btn btn-primary"
                   type="button"
                   onClick={() => {
-                    addItem(product, quantity);
-                    router.push("/checkout");
+                    addItem(product, quantity, { type: "buynow", openPopup: true });
                   }}
                 >
                   Buy Now - ₹{totalPrice}

@@ -47,7 +47,7 @@ export default function AboutPage() {
                 <MaterialIcon>auto_awesome</MaterialIcon>
                 <span>OUR PHILOSOPHY</span>
               </div>
-              <h1 className="about-h1">Simple skincare.<br />Visible results.</h1>
+              <h2 className="about-h1">Simple skincare.<br />Visible results.</h2>
               <p className="about-tagline">
                 Less clutter. More clarity. Better skin every single day.
               </p>

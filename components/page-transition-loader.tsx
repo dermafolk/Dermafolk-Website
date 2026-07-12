@@ -64,11 +64,11 @@ function PageTransitionHandler() {
 
       // If it's navigating to a new internal pathname
       const cleanHref = href.split("?")[0]?.split("#")[0];
-      if (cleanHref && cleanHref !== pathname && cleanHref.startsWith("/")) {
+      if (cleanHref && cleanHref !== pathname && cleanHref.startsWith("/") && !anchor.hasAttribute("data-no-loader")) {
         // Delay loader so Next.js Link onClick triggers navigation first
         timeoutId = setTimeout(() => {
           setLoading(true);
-        }, 50);
+        }, 100);
       }
     };
 
@@ -84,7 +84,7 @@ function PageTransitionHandler() {
     if (loading) {
       const fallback = setTimeout(() => {
         setLoading(false);
-      }, 3500);
+      }, 1500);
       return () => clearTimeout(fallback);
     }
   }, [loading]);
