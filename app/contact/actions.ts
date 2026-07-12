@@ -2,6 +2,8 @@
 
 import { createServerSupabaseClient } from "@/lib/supabase";
 import { contactLeadSchema } from "@/lib/validators";
+import { addMemoryLead } from "@/lib/data";
+import type { ContactLead } from "@/lib/types";
 
 export type ContactFormState = {
   ok: boolean;
@@ -28,6 +30,17 @@ export async function submitContactLead(
   }
 
   const fullName = `${parsed.data.firstName} ${parsed.data.lastName}`.trim();
+  const newLead: ContactLead = {
+    id: `lead-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+    name: fullName,
+    email: parsed.data.email,
+    phone: parsed.data.phone ?? undefined,
+    message: parsed.data.message,
+    status: "new",
+    createdAt: new Date().toISOString(),
+  };
+
+  addMemoryLead(newLead);
 
   const supabase = createServerSupabaseClient();
   if (supabase) {
@@ -52,9 +65,44 @@ export async function submitContactLead(
     }
   }
 
-
   return {
     ok: true,
     message: "Message sent. We will follow up soon.",
   };
+}
+
+export async function subscribeNewsletterAction(emailInput: string): Promise<{ ok: boolean; message: string }> {
+  const email = emailInput.trim();
+  if (!email || !email.includes("@")) {
+    return { ok: false, message: "Please enter a valid email address." };
+  }
+
+  const newLead: ContactLead = {
+    id: `sub-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+    name: "Newsletter Subscriber",
+    email,
+    subject: "Newsletter Subscription",
+    message: "Subscribed to Dermafolk restock alerts and formula notes.",
+    status: "new",
+    createdAt: new Date().toISOString(),
+  };
+
+  addMemoryLead(newLead);
+
+  const supabase = createServerSupabaseClient();
+  if (supabase) {
+    try {
+      await supabase.from("contact_leads").insert({
+        name: newLead.name,
+        email: newLead.email,
+        subject: newLead.subject,
+        message: newLead.message,
+        status: newLead.status,
+      });
+    } catch (err) {
+      console.error("Newsletter submission database error:", err);
+    }
+  }
+
+  return { ok: true, message: "Thank you for subscribing!" };
 }

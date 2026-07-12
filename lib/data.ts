@@ -28,6 +28,48 @@ export const fallbackSections: HomepageSection[] = [
   },
 ];
 
+const globalForData = globalThis as unknown as {
+  __dermafolkLeads?: ContactLead[];
+};
+
+export function getFallbackLeads(): ContactLead[] {
+  if (!globalForData.__dermafolkLeads) {
+    globalForData.__dermafolkLeads = [
+      {
+        id: "seed-sub-1",
+        name: "Newsletter Subscriber",
+        email: "priya.sharma@example.com",
+        subject: "Newsletter Subscription",
+        message: "Subscribed to Dermafolk restock alerts and formula notes.",
+        status: "new",
+        createdAt: new Date().toISOString(),
+      },
+    ];
+  }
+  return globalForData.__dermafolkLeads;
+}
+
+export function addMemoryLead(lead: ContactLead) {
+  const list = getFallbackLeads();
+  list.unshift(lead);
+}
+
+export function deleteMemoryLead(id: string) {
+  const list = getFallbackLeads();
+  const index = list.findIndex((l) => l.id === id);
+  if (index !== -1) {
+    list.splice(index, 1);
+  }
+}
+
+export function updateMemoryLeadStatus(id: string, status: "new" | "handled") {
+  const list = getFallbackLeads();
+  const item = list.find((l) => l.id === id);
+  if (item) {
+    item.status = status;
+  }
+}
+
 export const fallbackLeads: ContactLead[] = [];
 export const fallbackOrders: Order[] = [];
 
@@ -144,8 +186,9 @@ export async function getHomepageSections(): Promise<HomepageSection[]> {
 }
 
 export async function getContactLeads(): Promise<ContactLead[]> {
+  const localLeads = getFallbackLeads();
   const supabase = createServerSupabaseClient();
-  if (!supabase) return fallbackLeads;
+  if (!supabase) return localLeads;
 
   try {
     const { data, error } = await supabase
@@ -153,8 +196,8 @@ export async function getContactLeads(): Promise<ContactLead[]> {
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (error || !data) return fallbackLeads;
-    return data.map((row) => ({
+    if (error || !data) return localLeads;
+    const dbLeads = data.map((row) => ({
       id: row.id,
       name: row.name,
       email: row.email,
@@ -164,8 +207,17 @@ export async function getContactLeads(): Promise<ContactLead[]> {
       status: row.status,
       createdAt: row.created_at,
     }));
+
+    const seen = new Set(dbLeads.map((l) => l.id));
+    for (const lead of localLeads) {
+      if (!seen.has(lead.id)) {
+        dbLeads.unshift(lead);
+        seen.add(lead.id);
+      }
+    }
+    return dbLeads;
   } catch {
-    return fallbackLeads;
+    return localLeads;
   }
 }
 

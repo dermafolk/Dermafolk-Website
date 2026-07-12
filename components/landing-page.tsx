@@ -161,7 +161,7 @@ function ReviewModal({
         <button className="modal-close" onClick={onClose} aria-label="Close">
           <MaterialIcon>close</MaterialIcon>
         </button>
-        <h3 style={{ marginBottom: "24px" }}>Write a Review</h3>
+        <h3 style={{ marginBottom: "16px" }}>Write a Review</h3>
         <div className="field">
           <label>Your rating</label>
           <div className="star-select">
@@ -182,7 +182,7 @@ function ReviewModal({
         </div>
         <div className="field">
           <label>Your review</label>
-          <textarea rows={4} placeholder="Tell us how Dermafolk worked for you..." value={reviewForm.text} onChange={(event) => setReviewForm((form) => ({ ...form, text: event.target.value }))} />
+          <textarea rows={2} placeholder="Tell us how Dermafolk worked for you..." value={reviewForm.text} onChange={(event) => setReviewForm((form) => ({ ...form, text: event.target.value }))} />
         </div>
         <Button className="btn btn-primary modal-submit" onClick={addReview}>Submit Review</Button>
       </div>

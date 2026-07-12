@@ -3,6 +3,7 @@
 import { getAdminSession } from "@/lib/admin-auth";
 import { createServerSupabaseClient } from "@/lib/supabase";
 import { uploadProductImage } from "@/lib/media";
+import { deleteMemoryLead, updateMemoryLeadStatus } from "@/lib/data";
 import {
   homepageSectionSchema,
   productInputSchema,
@@ -208,9 +209,11 @@ export async function markLeadHandledAction(
   const handledValue = String(formData.get("handled") ?? "");
   const handled = handledValue === "true" || handledValue === "on";
 
+  updateMemoryLeadStatus(id, handled ? "handled" : "new");
+
   const supabase = createServerSupabaseClient();
   if (!supabase) {
-    return failure("Database connection unavailable.");
+    return success(handled ? "Lead marked handled." : "Lead marked unhandled.");
   }
 
   try {
@@ -227,6 +230,40 @@ export async function markLeadHandledAction(
   }
 
   return success(handled ? "Lead marked handled." : "Lead marked unhandled.");
+}
+
+export async function deleteLeadAction(
+  _prev: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  if (!(await requireAdminSession())) {
+    return failure("Admin session required.");
+  }
+
+  const id = String(formData.get("id") ?? "").trim();
+  if (!id) {
+    return failure("Lead id is required.");
+  }
+
+  deleteMemoryLead(id);
+
+  const supabase = createServerSupabaseClient();
+  if (supabase) {
+    try {
+      const { error } = await supabase
+        .from("contact_leads")
+        .delete()
+        .eq("id", id);
+
+      if (error) {
+        return failure(error.message);
+      }
+    } catch (err) {
+      return failure(err instanceof Error ? err.message : "Database error");
+    }
+  }
+
+  return success("Lead/subscriber deleted successfully.");
 }
 
 export async function updateOrderStatusAction(

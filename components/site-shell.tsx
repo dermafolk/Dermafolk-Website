@@ -18,6 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { NavAuth } from "@/components/nav-auth";
 import { useCart } from "@/components/cart-provider";
+import { subscribeNewsletterAction } from "@/app/contact/actions";
 import { BackToTop } from "@/components/back-to-top";
 
 function MaterialIcon({ children }: { children: string }) {
@@ -190,6 +191,28 @@ export function SiteHeader() {
 }
 
 export function SiteFooter() {
+  const [email, setEmail] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [status, setStatus] = useState<{ ok: boolean; message: string } | null>(null);
+
+  async function handleSubscribe(e: React.FormEvent) {
+    e.preventDefault();
+    if (!email.trim() || busy) return;
+    setBusy(true);
+    setStatus(null);
+    try {
+      const res = await subscribeNewsletterAction(email);
+      setStatus(res);
+      if (res.ok) {
+        setEmail("");
+      }
+    } catch {
+      setStatus({ ok: false, message: "Could not subscribe at this time." });
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <footer id="contact">
       <div className="wrap">
@@ -224,10 +247,32 @@ export function SiteFooter() {
           <div>
             <h5>Stay Updated</h5>
             <p style={{ color: "var(--ink-soft)", fontSize: "16px", marginBottom: "18px" }}>Restock alerts and formula notes, once a month.</p>
-            <div className="footer-form">
-              <input type="email" placeholder="Email address" aria-label="Email address" />
-              <button aria-label="Subscribe"><MaterialIcon>arrow_forward</MaterialIcon></button>
-            </div>
+            <form onSubmit={handleSubscribe} className="footer-form">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email address"
+                aria-label="Email address"
+                disabled={busy}
+                required
+              />
+              <button type="submit" aria-label="Subscribe" disabled={busy}>
+                {busy ? "..." : <MaterialIcon>arrow_forward</MaterialIcon>}
+              </button>
+            </form>
+            {status ? (
+              <p
+                style={{
+                  color: status.ok ? "#10b981" : "#ef4444",
+                  fontSize: "13px",
+                  fontWeight: 600,
+                  marginTop: "10px",
+                }}
+              >
+                {status.ok ? "✓ " : ""}{status.message}
+              </p>
+            ) : null}
           </div>
         </div>
         <div className="footer-bottom">
