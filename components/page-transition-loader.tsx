@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, useRef, Suspense } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 
 export function CircleLogoLoader({ text = "Loading..." }: { text?: string }) {
@@ -26,18 +26,17 @@ function PageTransitionHandler() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
-  const [prevPath, setPrevPath] = useState(pathname);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (pathname !== prevPath) {
-      setPrevPath(pathname);
-      setLoading(false);
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
     }
-  }, [pathname, searchParams, prevPath]);
+    setLoading(false);
+  }, [pathname, searchParams]);
 
   useEffect(() => {
-    let timeoutId: ReturnType<typeof setTimeout>;
-
     const handleLinkClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       const anchor = target.closest("a");
@@ -46,7 +45,6 @@ function PageTransitionHandler() {
       const href = anchor.getAttribute("href");
       if (!href) return;
 
-      // Ignore external links, anchor targets, download links, new tab clicks
       if (
         href.startsWith("http") ||
         href.startsWith("#") ||
@@ -57,25 +55,28 @@ function PageTransitionHandler() {
         e.ctrlKey ||
         e.metaKey ||
         e.shiftKey ||
-        e.altKey
+        e.altKey ||
+        anchor.hasAttribute("data-no-loader")
       ) {
         return;
       }
 
-      // If it's navigating to a new internal pathname
       const cleanHref = href.split("?")[0]?.split("#")[0];
-      if (cleanHref && cleanHref !== pathname && cleanHref.startsWith("/") && !anchor.hasAttribute("data-no-loader")) {
-        // Delay loader so Next.js Link onClick triggers navigation first
-        timeoutId = setTimeout(() => {
-          setLoading(true);
-        }, 100);
+      if (cleanHref && cleanHref !== pathname && cleanHref.startsWith("/")) {
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        const startPath = pathname;
+        timeoutRef.current = setTimeout(() => {
+          if (window.location.pathname === startPath) {
+            setLoading(true);
+          }
+        }, 150);
       }
     };
 
     document.addEventListener("click", handleLinkClick, { capture: false });
     return () => {
       document.removeEventListener("click", handleLinkClick, { capture: false });
-      if (timeoutId) clearTimeout(timeoutId);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, [pathname]);
 
@@ -84,7 +85,7 @@ function PageTransitionHandler() {
     if (loading) {
       const fallback = setTimeout(() => {
         setLoading(false);
-      }, 1500);
+      }, 800);
       return () => clearTimeout(fallback);
     }
   }, [loading]);

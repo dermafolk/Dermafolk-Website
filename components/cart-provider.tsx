@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { useRouter } from "next/navigation";
 
 import type { Product } from "@/lib/types";
 import { CartPopup } from "@/components/cart-popup";
@@ -42,6 +43,7 @@ const CART_STORAGE_KEY = "dermafolk-cart";
 const CartContext = createContext<CartContextValue | null>(null);
 
 export function CartProvider({ children }: { children: ReactNode }) {
+  const router = useRouter();
   const [items, setItems] = useState<CartItem[]>([]);
   const [popupState, setPopupState] = useState<CartPopupState>({
     isOpen: false,
@@ -99,7 +101,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
         return [...current, addedItem];
       });
 
-      if (options.openPopup !== false) {
+      if (options.type === "buynow") {
+        setPopupState((current) => ({ ...current, isOpen: false }));
+        router.push("/checkout");
+      } else if (options.openPopup !== false) {
         setPopupState({
           isOpen: true,
           type: options.type ?? "bag",
@@ -121,6 +126,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
       setItems([]);
     },
     openPopup(type, item) {
+      if (type === "buynow") {
+        setPopupState((current) => ({ ...current, isOpen: false }));
+        router.push("/checkout");
+        return;
+      }
       setPopupState({
         isOpen: true,
         type,
@@ -128,7 +138,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       });
     },
     closePopup,
-  }), [items, popupState, closePopup]);
+  }), [items, popupState, closePopup, router]);
 
   const totalQty = useMemo(() => items.reduce((total, item) => total + item.qty, 0), [items]);
 

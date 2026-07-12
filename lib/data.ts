@@ -79,18 +79,7 @@ export const fallbackSettings: Settings = {
   razorpayEnabled: false,
 };
 
-function mapProductRow(row: {
-  id: string;
-  slug: string;
-  name: string;
-  description: string;
-  price: number;
-  mrp: number;
-  discount_percent: number;
-  images?: { src: string; alt: string }[];
-  active: boolean;
-  category?: string | null;
-}): Product {
+function mapProductRow(row: any): Product {
   return {
     id: row.id,
     slug: row.slug,
@@ -105,7 +94,7 @@ function mapProductRow(row: {
   };
 }
 
-function mapSectionRow(row: { section_key: string; title: string; body: string }): HomepageSection {
+function mapSectionRow(row: any): HomepageSection {
   return {
     key: row.section_key,
     title: row.title,
@@ -197,7 +186,7 @@ export async function getContactLeads(): Promise<ContactLead[]> {
       .order("created_at", { ascending: false });
 
     if (error || !data) return localLeads;
-    const dbLeads = data.map((row) => ({
+    const dbLeads: ContactLead[] = data.map((row: any): ContactLead => ({
       id: row.id,
       name: row.name,
       email: row.email,
@@ -232,7 +221,7 @@ export async function getOrders(): Promise<Order[]> {
       .order("created_at", { ascending: false });
 
     if (error || !data) return fallbackOrders;
-    return data.map((row) => ({
+    return data.map((row: any): Order => ({
       id: row.id,
       customerName: row.customer_name,
       email: row.email,

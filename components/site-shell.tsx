@@ -128,6 +128,7 @@ export function SiteHeader() {
                 <Link
                   key={link.href}
                   href={link.href}
+                  onClick={() => setIsOpen(false)}
                   className={`mobile-drawer-link ${isActive ? "active" : ""}`}
                 >
                   <div className="mobile-drawer-link-left">
@@ -142,6 +143,7 @@ export function SiteHeader() {
             })}
             <Link
               href="/cart"
+              onClick={() => setIsOpen(false)}
               className={`mobile-drawer-link ${pathname === "/cart" ? "active" : ""}`}
             >
               <div className="mobile-drawer-link-left">
@@ -161,6 +163,7 @@ export function SiteHeader() {
             </Link>
             <Link
               href="/account"
+              onClick={() => setIsOpen(false)}
               className={`mobile-drawer-link ${pathname === "/account" ? "active" : ""}`}
             >
               <div className="mobile-drawer-link-left">
