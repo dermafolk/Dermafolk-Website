@@ -23,7 +23,7 @@ export function CartView({ settings }: { settings: Settings }) {
         <div className="wrap">
           <div className="admin-card" style={{ maxWidth: "720px" }}>
             <h2>Your bag is empty</h2>
-            <p>Add the Renewal Serum from the shop to continue.</p>
+            <p>Add the Renewal Face Wash from the shop to continue.</p>
             <Button asChild className="btn btn-primary">
               <Link href="/shop">Go to Shop</Link>
             </Button>

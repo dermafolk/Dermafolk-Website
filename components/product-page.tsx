@@ -32,7 +32,7 @@ const details: DetailItem[] = [
   {
     title: "Description",
     content:
-      "Dermafolk Renewal Serum is a single fragrance-free formula built at clinical actives concentration - glutathione, niacinamide, glycerin, mandelic acid and aloe vera - designed to brighten tone, support the skin barrier and gently resurface texture in one honest step, without a ten-step routine.",
+      "Dermafolk Renewal Face Wash is a single fragrance-free formula built at clinical actives concentration - glutathione, niacinamide, glycerin, mandelic acid and aloe vera - designed to brighten tone, support the skin barrier and gently resurface texture in one honest step, without a ten-step routine.",
   },
   {
     title: "How to Use",
@@ -111,7 +111,7 @@ export function ProductPage({ product }: { product: Product }) {
     <SiteShell>
       <div className="wrap">
         <div className="breadcrumb">
-          <a href="/">Home</a><span className="sep">/</span><span className="current">Renewal Serum</span>
+          <a href="/">Home</a><span className="sep">/</span><span className="current">Renewal Face Wash</span>
         </div>
       </div>
 
@@ -137,7 +137,7 @@ export function ProductPage({ product }: { product: Product }) {
           </div>
 
           <div className="pdp-info">
-            <div className="kicker">The Serum</div>
+            <div className="kicker">The Face Wash</div>
             <h1>{product.name}</h1>
             <div className="pdp-rating">
               <Stars />
@@ -184,11 +184,20 @@ export function ProductPage({ product }: { product: Product }) {
                 </Button>
               </div>
             </div>
-            <div className="pdp-trust-row">
-              <div><MaterialIcon>local_shipping</MaterialIcon> Free pan-India delivery</div>
-              <div><MaterialIcon>verified_user</MaterialIcon> 45-day guarantee</div>
-              <div><MaterialIcon>encrypted</MaterialIcon> Secure checkout</div>
-            </div>
+          </div>
+        </div>
+      </section>
+
+      <section style={{ borderTop: '1px solid var(--line)' }}>
+        <div className="wrap" style={{ padding: '40px 0', display: 'flex', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', gap: 'clamp(24px, 5vw, 56px)', maxWidth: '760px', margin: '0 auto', fontSize: 'clamp(15px, 1.5vw, 18px)', fontWeight: 500, color: 'var(--ink)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <MaterialIcon>local_shipping</MaterialIcon> Free pan-India delivery
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <MaterialIcon>verified_user</MaterialIcon> 45-day guarantee
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <MaterialIcon>encrypted</MaterialIcon> Secure checkout
           </div>
         </div>
       </section>

@@ -5,9 +5,9 @@ import { ProductPage } from "@/components/product-page";
 import { fallbackProducts, getProductBySlug } from "@/lib/data";
 
 export const metadata: Metadata = {
-  title: "Dermafolk Renewal Serum - Product Details",
+  title: "Dermafolk Renewal Face Wash - Product Details",
   description:
-    "Product details, ingredients, quantity selection, shipping, and checkout information for Dermafolk Renewal Serum.",
+    "Product details, ingredients, quantity selection, shipping, and checkout information for Dermafolk Renewal Face Wash.",
 };
 
 export default async function ShopPage() {

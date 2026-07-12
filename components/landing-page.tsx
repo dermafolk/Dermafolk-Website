@@ -17,7 +17,7 @@ const reviewsSeed: Review[] = [
   { name: "Priya M.", city: "Mumbai", text: "I stopped using four other products in the same week. My skin tone looks so much more even.", rating: 5 },
   { name: "Denise K.", city: "Bengaluru", text: "The texture is what sold me - it disappears in seconds and my makeup sits better on top.", rating: 5 },
   { name: "Sana R.", city: "Delhi", text: "Sensitive skin, zero reaction, and visibly less redness around my nose by week three.", rating: 5 },
-  { name: "Neha S.", city: "Pune", text: "Finally a serum that doesn't clog my pores. Two months in and my texture is so much smoother.", rating: 5 },
+  { name: "Neha S.", city: "Pune", text: "Finally a face wash that doesn't clog my pores. Two months in and my texture is so much smoother.", rating: 5 },
   { name: "Ritu A.", city: "Hyderabad", text: "Gentle enough for daily use and I've genuinely stopped reaching for concealer as often.", rating: 4.5 },
   { name: "Kavya N.", city: "Kochi", text: "Delivery was quick even to my hometown, and the packaging felt premium straight out of the box.", rating: 5 },
 ];
@@ -41,7 +41,7 @@ const faqs = [
   {
     question: "Can Dermafolk really replace my whole routine?",
     answer:
-      "For most people, yes - Dermafolk is dosed to cover hydration, brightening and gentle exfoliation in one step. If you use a targeted treatment like retinol or a prescription, keep that and layer Dermafolk underneath as your daily serum.",
+      "For most people, yes - Dermafolk is dosed to cover hydration, brightening and gentle exfoliation in one step. If you use a targeted treatment like retinol or a prescription, keep that and layer Dermafolk underneath as your daily face wash.",
   },
   { question: "Is it suitable for sensitive skin?", answer: "Yes. The formula is fragrance-free and uses a gentle, larger-molecule AHA, so it was designed with sensitive and reactive skin types in mind." },
   { question: "Do you deliver across India?", answer: "Yes - we ship pan India to every serviceable pin code, with tracked and insured delivery on every order." },
@@ -258,7 +258,7 @@ function ReviewsCarousel({ reviews }: { reviews: Review[] }) {
 
 const heroTitleFallback = "Brighter, calmer skin in one honest step.";
 const heroBodyFallback =
-  "Glutathione, niacinamide and mandelic acid, in a single fragrance-free serum built to even tone and soften texture - without the ten-step routine.";
+  "Glutathione, niacinamide and mandelic acid, in a single fragrance-free face wash built to even tone and soften texture - without the ten-step routine.";
 
 export function LandingPage({ hero }: { hero?: HomepageSection }) {
   const [reviewOpen, setReviewOpen] = useState(false);
@@ -313,8 +313,8 @@ export function LandingPage({ hero }: { hero?: HomepageSection }) {
           </div>
           <div className="product-info">
             <div className="kicker">The Product</div>
-            <h2>Dermafolk Renewal Serum</h2>
-            <p className="desc">A single fragrance-free serum formulated at clinical concentrations - built to brighten, hydrate and gently resurface, so it's the only step your skin actually asks for.</p>
+            <h2>Dermafolk Renewal Face Wash</h2>
+            <p className="desc">A single fragrance-free face wash formulated at clinical concentrations - built to brighten, hydrate and gently resurface, so it's the only step your skin actually asks for.</p>
             <PriceLine />
             <ul className="product-facts">
               <li><MaterialIcon>science</MaterialIcon> 5 active ingredients, clinically dosed</li>
@@ -345,7 +345,7 @@ export function LandingPage({ hero }: { hero?: HomepageSection }) {
             <div className="inner">
               <div className="kicker">The Problem</div>
               <h2>Your skin doesn&apos;t need eleven products. It needs one, done properly.</h2>
-              <p>Serums, essences, oils, spot treatments - most routines layer actives that were never designed to work together, leaving skin irritated instead of renewed.</p>
+              <p>Face washes, essences, oils, spot treatments - most routines layer actives that were never designed to work together, leaving skin irritated instead of renewed.</p>
               <p>Dermafolk was built backwards from the goal: one formula, correctly dosed, that does the job of a full shelf.</p>
             </div>
           </div>
@@ -388,7 +388,7 @@ export function LandingPage({ hero }: { hero?: HomepageSection }) {
             </div>
           </div>
           <div className="ritual-img">
-            <img src="/assets/lady-using-product.webp" alt="Woman applying Dermafolk serum during her morning routine" />
+            <img src="/assets/lady-using-product.webp" alt="Woman applying Dermafolk face wash during her morning routine" />
           </div>
         </div>
       </section>
@@ -433,7 +433,7 @@ export function LandingPage({ hero }: { hero?: HomepageSection }) {
           <div className="content">
             <div className="kicker">Try It Risk-Free</div>
             <h2>45 days to fall in love with one bottle.</h2>
-            <p>Free pan-India shipping on every order, and a full refund if it isn&apos;t the last serum you ever buy.</p>
+            <p>Free pan-India shipping on every order, and a full refund if it isn&apos;t the last face wash you ever buy.</p>
             <PriceLine />
             <Button asChild className="btn btn-primary">
               <a href="/shop">Buy Now - ₹495</a>

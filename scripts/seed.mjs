@@ -62,15 +62,15 @@ const SETTINGS_ID = "00000000-0000-0000-0000-000000000001";
 
 const product = {
   slug: "renewal-serum",
-  name: "Dermafolk Renewal Serum",
+  name: "Dermafolk Renewal Face Wash",
   description:
-    "A single fragrance-free serum formulated at clinical concentrations built to brighten, hydrate and gently resurface.",
+    "A single fragrance-free face wash formulated at clinical concentrations built to brighten, hydrate and gently resurface.",
   price: 495,
   mrp: 799,
   discount_percent: 38,
   images: [
     { src: "/assets/product-image.webp", alt: "Dermafolk product bottle on a stone tray" },
-    { src: "/assets/lady-using-product.webp", alt: "Woman applying Dermafolk serum" },
+    { src: "/assets/lady-using-product.webp", alt: "Woman applying Dermafolk face wash" },
     { src: "/assets/banner-image.webp", alt: "Dermafolk product bottle styled with plant shadows" },
   ],
   active: true,
@@ -87,7 +87,7 @@ const settings = {
 const heroSection = {
   section_key: "hero",
   title: "Brighter, calmer skin in one honest step.",
-  body: "Glutathione, niacinamide and mandelic acid in a single fragrance-free serum.",
+  body: "Glutathione, niacinamide and mandelic acid in a single fragrance-free face wash.",
 };
 
 async function run() {

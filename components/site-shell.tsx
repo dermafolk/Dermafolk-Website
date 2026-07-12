@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 
+import { NavAuth } from "@/components/nav-auth";
+
 function MaterialIcon({ children }: { children: string }) {
   return <span className="msi">{children}</span>;
 }
@@ -17,13 +19,6 @@ function BrandLogo({ className = "" }: { className?: string }) {
   );
 }
 
-function HeaderLogo() {
-  return (
-    <span className="header-logo">
-      <img src="/assets/logo-half.png" alt="Dermafolk" />
-    </span>
-  );
-}
 
 export function SiteHeader() {
   const pathname = usePathname();
@@ -32,7 +27,7 @@ export function SiteHeader() {
     <header>
       <div className="nav">
         <a href="/" className="logo logo-image" aria-label="Dermafolk home">
-          <HeaderLogo />
+          <BrandLogo className="brand-logo-navbar" />
         </a>
         <nav className="nav-links">
           <a href="/" className={pathname === "/" ? "active" : undefined}>Home</a>
@@ -41,11 +36,7 @@ export function SiteHeader() {
           <a href="/contact" className={pathname === "/contact" ? "active" : undefined}>Contact</a>
         </nav>
         <div className="nav-cta">
-          <Button asChild className="icon-btn" aria-label="Admin login">
-            <a href="/admin">
-              <MaterialIcon>person</MaterialIcon>
-            </a>
-          </Button>
+          <NavAuth />
           <Button asChild className="btn btn-primary">
             <a href="/shop#buy-panel">Buy Now</a>
           </Button>
@@ -65,13 +56,13 @@ export function SiteFooter() {
               <BrandLogo className="brand-logo-footer" />
             </a>
             <p style={{ color: "var(--ink-soft)", fontSize: "16px", maxWidth: "260px" }}>
-              One renewal serum, formulated to replace the routine - made in small batches and refillable for life.
+              One renewal face wash, formulated to replace the routine - made in small batches and refillable for life.
             </p>
           </div>
           <div>
             <h5>Shop</h5>
             <ul>
-              <li><a href="/shop">Renewal Serum</a></li>
+              <li><a href="/shop">Renewal Face Wash</a></li>
               <li><a href="/#formula">Refill Bottle</a></li>
               <li><a href="/contact">Gift Set</a></li>
             </ul>

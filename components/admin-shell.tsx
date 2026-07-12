@@ -1,6 +1,7 @@
 "use client";
 
 import { Loader2, LogOut, ShieldAlert } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -93,41 +94,21 @@ export function AdminShell({ children }: { children: ReactNode }) {
     setSession(null);
   }
 
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!checking && !allowed) {
+      router.push("/login");
+    }
+  }, [checking, allowed, router]);
+
   if (!allowed) {
     return (
       <main className="admin-login-page">
-        {checking ? (
-          <section className="admin-card admin-login-card">
-            <div className="admin-kicker">Checking admin session</div>
-            <p className="desc" style={{ marginTop: "12px" }}>Please wait...</p>
-          </section>
-        ) : (
-          <section className="admin-card admin-login-card">
-            <div className="admin-kicker" style={{ marginBottom: "8px" }}>
-              <ShieldAlert className="h-4 w-4" style={{ display: "inline-block", marginRight: "6px", verticalAlign: "text-bottom" }} />
-              Admin access required
-            </div>
-            <h1>Sign in</h1>
-            <p style={{ marginBottom: "22px" }}>
-              Use the admin email and password configured in the server env.
-            </p>
-            <form className="admin-stack" onSubmit={handleLogin}>
-              <div className="field">
-                <label>Email</label>
-                <input value={email} onChange={(event) => setEmail(event.target.value)} type="email" placeholder="you@example.com" />
-              </div>
-              <div className="field">
-                <label>Password</label>
-                <input value={password} onChange={(event) => setPassword(event.target.value)} type="password" placeholder="Password" />
-              </div>
-              <Button className="btn btn-primary" type="submit" disabled={busy}>
-                {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldAlert className="h-4 w-4" />}
-                <span>{busy ? "Signing in..." : "Sign In"}</span>
-              </Button>
-            </form>
-            {status ? <p className="desc" style={{ marginTop: "16px" }}>{status}</p> : null}
-          </section>
-        )}
+        <section className="admin-card admin-login-card">
+          <div className="admin-kicker">Redirecting to login</div>
+          <p className="desc" style={{ marginTop: "12px" }}>Please wait...</p>
+        </section>
       </main>
     );
   }

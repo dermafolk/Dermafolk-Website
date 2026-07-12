@@ -4,7 +4,7 @@ import { SiteShell } from "@/components/site-shell";
 
 export const metadata: Metadata = {
   title: "About - Dermafolk",
-  description: "About Dermafolk and the renewal serum philosophy.",
+  description: "About Dermafolk and the renewal face wash philosophy.",
 };
 
 function MaterialIcon({ children }: { children: string }) {
@@ -39,7 +39,7 @@ export default function AboutPage() {
     <SiteShell>
       {/* Section 1 — About Hero */}
       <section className="about-hero">
-        <div className="about-hero-container">
+        <div className="about-hero-container wrap">
           <div className="about-hero-grid">
             <div className="about-hero-content">
               <div className="about-eyebrow">ABOUT US</div>
@@ -67,7 +67,7 @@ export default function AboutPage() {
 
       {/* Section 2 — Features */}
       <section className="about-features">
-        <div className="about-features-container">
+        <div className="about-features-container wrap">
           <div className="about-features-grid">
             {features.map((f) => (
               <div className="about-feature-card" key={f.title}>
@@ -84,7 +84,7 @@ export default function AboutPage() {
 
       {/* Section 3 — Our Promise */}
       <section className="about-promise">
-        <div className="about-promise-container">
+        <div className="about-promise-container wrap">
           <div className="about-promise-grid">
             <div className="about-promise-image">
               <img src="/assets/lower_left_image.png" alt="Dermafolk product photography" />

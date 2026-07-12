@@ -233,27 +233,31 @@ header {
   transform-origin: center center;
 }
 
-.header-logo {
-  display: inline-flex;
-  align-items: center;
-  width: clamp(175px, 20vw, 230px);
-  height: 38px;
+.brand-logo-navbar {
+  width: clamp(70px, 10vw, 90px);
+  height: auto;
+  aspect-ratio: 417 / 336;
+  overflow: visible;
+  flex-shrink: 0;
 }
 
-.header-logo img {
+.brand-logo.brand-logo-navbar img {
   width: 100%;
-  height: auto;
+  height: 100%;
   object-fit: contain;
+  transform: none;
 }
 
 .footer-logo {
   display: inline-flex;
   margin-bottom: 16px;
+  margin-left: -12px;
 }
 
 .brand-logo-footer {
-  width: min(260px, 100%);
-  height: 220px;
+  width: min(220px, 100%);
+  height: auto;
+  aspect-ratio: 417 / 336;
   overflow: visible;
 }
 
@@ -718,7 +722,7 @@ header {
 
 .trust-strip {
   background: var(--ink);
-  padding: clamp(24px, 3vw, 36px) 0;
+  padding: clamp(12px, 2vw, 20px) 0;
 }
 
 .trust-grid {
@@ -730,7 +734,7 @@ header {
 
 .trust-card {
   background: var(--ink);
-  padding: clamp(16px, 2.5vw, 20px) clamp(10px, 2vw, 20px);
+  padding: clamp(12px, 1.5vw, 16px) clamp(8px, 1vw, 12px);
   display: flex;
   flex-direction: column;
   align-items: center;

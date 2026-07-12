@@ -4,9 +4,9 @@ import "./globals.css";
 import { CartProvider } from "@/components/cart-provider";
 
 export const metadata: Metadata = {
-  title: "Dermafolk - The Renewal Serum",
+  title: "Dermafolk - The Renewal Face Wash",
   description:
-    "Glutathione, niacinamide and mandelic acid in a single fragrance-free serum built to even tone and soften texture.",
+    "Glutathione, niacinamide and mandelic acid in a single fragrance-free face wash built to even tone and soften texture.",
 };
 
 export default function RootLayout({

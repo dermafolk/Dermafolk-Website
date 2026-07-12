@@ -181,7 +181,7 @@ export function ProductForm({ product }: { product?: Product }) {
             <input
               name="category"
               defaultValue={product?.category ?? ""}
-              placeholder="serum"
+              placeholder="face wash"
             />
           </div>
         </div>
