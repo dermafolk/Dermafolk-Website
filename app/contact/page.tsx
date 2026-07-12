@@ -19,7 +19,7 @@ export default function ContactPage() {
               <div className="contact-left-inner">
                 <h2 className="contact-heading">Get in Touch</h2>
                 <p className="contact-lede">
-                  We'd love to hear from you. Whether it's a question about sizing or a custom order, we're here to help.
+                  We&apos;d love to hear from you. Whether it&apos;s a question about sizing or a custom order, we&apos;re here to help.
                 </p>
 
                 <div className="contact-info-block">

@@ -19,7 +19,7 @@ export function CartView({ settings }: { settings: Settings }) {
 
   if (!items.length) {
     return (
-      <section className="section-pad">
+      <section className="section-pad cart-views">
         <div className="wrap">
           <div className="admin-card" style={{ maxWidth: "720px" }}>
             <h2>Your bag is empty</h2>

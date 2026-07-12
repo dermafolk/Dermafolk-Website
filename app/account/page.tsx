@@ -6,18 +6,35 @@ import { Button } from "@/components/ui/button";
 
 export default async function AccountPage() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  if (!supabase) {
+    redirect("/login");
+  }
+
+  let user = null;
+  try {
+    const res = await supabase.auth.getUser();
+    user = res.data.user;
+  } catch {
+    redirect("/login");
+  }
 
   if (!user) {
     redirect("/login");
   }
 
   // Fetch user profile
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .single();
+  let profile = null;
+  try {
+    const res = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", user.id)
+      .single();
+    profile = res.data;
+  } catch {
+    // Ignore profile fetch error
+  }
+
 
   return (
     <SiteShell>
@@ -38,7 +55,7 @@ export default async function AccountPage() {
 
           <div className="admin-card" style={{ marginBottom: "32px" }}>
             <h3 style={{ marginBottom: "16px" }}>Order History</h3>
-            <p style={{ color: "var(--ink-soft)" }}>You haven't placed any orders yet.</p>
+            <p style={{ color: "var(--ink-soft)" }}>You haven&apos;t placed any orders yet.</p>
           </div>
 
           <form action={logoutAction}>

@@ -21,25 +21,48 @@ const envSchema = z.object({
 
 export const env = envSchema.parse(process.env);
 
-export function hasSupabaseEnv() {
-  return Boolean(
-    (env.NEXT_PUBLIC_SUPABASE_URL || env.SUPABASE_URL) &&
-      (env.NEXT_PUBLIC_SUPABASE_ANON_KEY || env.SUPABASE_ANON_KEY),
-  );
+function isValidUrl(url?: string | null): boolean {
+  if (!url || typeof url !== "string") return false;
+  const trimmed = url.trim();
+  if (!trimmed.startsWith("http://") && !trimmed.startsWith("https://")) return false;
+  if (trimmed.includes("your-supabase-url") || trimmed.toLowerCase().includes("i have this")) return false;
+  try {
+    new URL(trimmed);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
-export function hasSupabaseServiceEnv() {
-  return Boolean(env.SUPABASE_URL && env.SUPABASE_SECRET_KEY);
+function isValidKey(key?: string | null): boolean {
+  if (!key || typeof key !== "string") return false;
+  const trimmed = key.trim();
+  if (trimmed.length < 10) return false;
+  if (trimmed.includes("your-supabase-anon-key") || trimmed.toLowerCase().includes("i have this")) return false;
+  return true;
 }
 
-export function hasAdminBootstrapEnv() {
+export function getSupabaseUrl(): string | null {
+  const url = env.NEXT_PUBLIC_SUPABASE_URL || env.SUPABASE_URL || null;
+  return isValidUrl(url) ? url!.trim() : null;
+}
+
+export function getSupabaseAnonKey(): string | null {
+  const key = env.NEXT_PUBLIC_SUPABASE_ANON_KEY || env.SUPABASE_ANON_KEY || null;
+  return isValidKey(key) ? key!.trim() : null;
+}
+
+export function hasSupabaseEnv(): boolean {
+  return Boolean(getSupabaseUrl() && getSupabaseAnonKey());
+}
+
+export function hasSupabaseServiceEnv(): boolean {
+  const url = getSupabaseUrl();
+  const secretKey = env.SUPABASE_SECRET_KEY || null;
+  return Boolean(url && isValidKey(secretKey));
+}
+
+export function hasAdminBootstrapEnv(): boolean {
   return Boolean(env.ADMIN_EMAIL && env.ADMIN_PASSWORD && (env.ADMIN_SESSION_SECRET || env.SUPABASE_SECRET_KEY));
 }
 
-export function getSupabaseUrl() {
-  return env.NEXT_PUBLIC_SUPABASE_URL || env.SUPABASE_URL || null;
-}
-
-export function getSupabaseAnonKey() {
-  return env.NEXT_PUBLIC_SUPABASE_ANON_KEY || env.SUPABASE_ANON_KEY || null;
-}

@@ -14,16 +14,31 @@ export function createBrowserSupabaseClient() {
   const anonKey = getSupabaseAnonKey();
   if (!url || !anonKey) return null;
 
-  return createClient(url, anonKey);
+  try {
+    return createClient(url, anonKey);
+  } catch (err) {
+    console.error("Browser Supabase init error:", err);
+    return null;
+  }
 }
 
 export function createServerSupabaseClient() {
   if (!hasSupabaseServiceEnv()) return null;
-  return createClient(env.SUPABASE_URL as string, env.SUPABASE_SECRET_KEY as string, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
+  const url = getSupabaseUrl();
+  const secretKey = env.SUPABASE_SECRET_KEY?.trim();
+  if (!url || !secretKey) return null;
+
+  try {
+    return createClient(url, secretKey, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+  } catch (err) {
+    console.error("Server Supabase init error:", err);
+    return null;
+  }
 }
 
 export function createAdminSupabaseClient() {
   return createServerSupabaseClient();
 }
+

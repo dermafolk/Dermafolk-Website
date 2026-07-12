@@ -314,7 +314,7 @@ export function LandingPage({ hero }: { hero?: HomepageSection }) {
           <div className="product-info">
             <div className="kicker">The Product</div>
             <h2>Dermafolk Renewal Face Wash</h2>
-            <p className="desc">A single fragrance-free face wash formulated at clinical concentrations - built to brighten, hydrate and gently resurface, so it's the only step your skin actually asks for.</p>
+            <p className="desc">A single fragrance-free face wash formulated at clinical concentrations - built to brighten, hydrate and gently resurface, so it&apos;s the only step your skin actually asks for.</p>
             <PriceLine />
             <ul className="product-facts">
               <li><MaterialIcon>science</MaterialIcon> 5 active ingredients, clinically dosed</li>
@@ -416,7 +416,8 @@ export function LandingPage({ hero }: { hero?: HomepageSection }) {
               return (
               <div className={`faq-item ${isOpen ? "open" : ""}`} key={faq.question}>
                 <button className="faq-q" type="button" onClick={() => setOpenFaq(isOpen ? null : index)}>
-                  {faq.question} <MaterialIcon>add</MaterialIcon>
+                  <span>{faq.question}</span>
+                  <MaterialIcon>add</MaterialIcon>
                 </button>
                 <div className="faq-a" style={{ maxHeight: isOpen ? "260px" : undefined }}>
                   <p>{faq.answer}</p>

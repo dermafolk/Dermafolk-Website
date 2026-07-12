@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { getAuthRoleAction } from "@/app/actions/auth";
 import { Button } from "@/components/ui/button";
 
@@ -18,7 +19,7 @@ export function NavAuth() {
   if (role === "admin") {
     return (
       <Button asChild className="btn btn-outline" style={{ padding: '8px 16px', border: '1px solid var(--line)', background: 'transparent' }}>
-        <a href="/admin">Admin Dashboard</a>
+        <Link href="/admin">Admin Dashboard</Link>
       </Button>
     );
   }
@@ -26,18 +27,18 @@ export function NavAuth() {
   if (role === "customer") {
     return (
       <Button asChild className="icon-btn" aria-label="My Account">
-        <a href="/account">
+        <Link href="/account">
           <MaterialIcon>person</MaterialIcon>
-        </a>
+        </Link>
       </Button>
     );
   }
 
   return (
     <Button asChild className="icon-btn" aria-label="Log In">
-      <a href="/login">
+      <Link href="/login">
         <MaterialIcon>person</MaterialIcon>
-      </a>
+      </Link>
     </Button>
   );
 }

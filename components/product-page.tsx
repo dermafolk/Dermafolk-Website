@@ -2,6 +2,7 @@
 
 import { type HTMLAttributes, type ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 import { type Product } from "@/lib/types";
 
@@ -111,7 +112,7 @@ export function ProductPage({ product }: { product: Product }) {
     <SiteShell>
       <div className="wrap">
         <div className="breadcrumb">
-          <a href="/">Home</a><span className="sep">/</span><span className="current">Renewal Face Wash</span>
+          <Link href="/">Home</Link><span className="sep">/</span><span className="current">Renewal Face Wash</span>
         </div>
       </div>
 

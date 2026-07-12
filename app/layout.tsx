@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 import { CartProvider } from "@/components/cart-provider";
+import { PageTransitionLoader } from "@/components/page-transition-loader";
 
 export const metadata: Metadata = {
   title: "Dermafolk - The Renewal Face Wash",
@@ -29,8 +30,12 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <CartProvider>{children}</CartProvider>
+        <CartProvider>
+          <PageTransitionLoader />
+          {children}
+        </CartProvider>
       </body>
     </html>
   );
 }
+

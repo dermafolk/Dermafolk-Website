@@ -61,21 +61,25 @@ export async function saveProductAction(
 
   const supabase = createServerSupabaseClient();
   if (supabase) {
-    const { error } = await supabase.from("products").upsert({
-      id: parsed.data.id,
-      slug: parsed.data.slug,
-      name: parsed.data.name,
-      description: parsed.data.description,
-      price: parsed.data.price,
-      mrp: parsed.data.mrp,
-      discount_percent: parsed.data.discountPercent,
-      images: parsed.data.images,
-      active: parsed.data.active,
-      category: parsed.data.category ?? null,
-    });
+    try {
+      const { error } = await supabase.from("products").upsert({
+        id: parsed.data.id,
+        slug: parsed.data.slug,
+        name: parsed.data.name,
+        description: parsed.data.description,
+        price: parsed.data.price,
+        mrp: parsed.data.mrp,
+        discount_percent: parsed.data.discountPercent,
+        images: parsed.data.images,
+        active: parsed.data.active,
+        category: parsed.data.category ?? null,
+      });
 
-    if (error) {
-      return failure(error.message);
+      if (error) {
+        return failure(error.message);
+      }
+    } catch (err) {
+      return failure(err instanceof Error ? err.message : "Database error");
     }
   }
 
@@ -102,14 +106,18 @@ export async function saveHomepageSectionAction(
 
   const supabase = createServerSupabaseClient();
   if (supabase) {
-    const { error } = await supabase.from("homepage_sections").upsert({
-      section_key: parsed.data.key,
-      title: parsed.data.title,
-      body: parsed.data.body,
-    });
+    try {
+      const { error } = await supabase.from("homepage_sections").upsert({
+        section_key: parsed.data.key,
+        title: parsed.data.title,
+        body: parsed.data.body,
+      });
 
-    if (error) {
-      return failure(error.message);
+      if (error) {
+        return failure(error.message);
+      }
+    } catch (err) {
+      return failure(err instanceof Error ? err.message : "Database error");
     }
   }
 
@@ -136,14 +144,18 @@ export async function saveSettingsAction(
 
   const supabase = createServerSupabaseClient();
   if (supabase) {
-    const { error } = await supabase.from("site_settings").upsert({
-      shipping_charge: parsed.data.shippingCharge,
-      cod_enabled: parsed.data.codEnabled,
-      razorpay_enabled: parsed.data.razorpayEnabled,
-    });
+    try {
+      const { error } = await supabase.from("site_settings").upsert({
+        shipping_charge: parsed.data.shippingCharge,
+        cod_enabled: parsed.data.codEnabled,
+        razorpay_enabled: parsed.data.razorpayEnabled,
+      });
 
-    if (error) {
-      return failure(error.message);
+      if (error) {
+        return failure(error.message);
+      }
+    } catch (err) {
+      return failure(err instanceof Error ? err.message : "Database error");
     }
   }
 
@@ -168,9 +180,13 @@ export async function deleteProductAction(
     return failure("Database connection unavailable.");
   }
 
-  const { error } = await supabase.from("products").delete().eq("id", id);
-  if (error) {
-    return failure(error.message);
+  try {
+    const { error } = await supabase.from("products").delete().eq("id", id);
+    if (error) {
+      return failure(error.message);
+    }
+  } catch (err) {
+    return failure(err instanceof Error ? err.message : "Database error");
   }
 
   return success("Product deleted.");
@@ -197,13 +213,17 @@ export async function markLeadHandledAction(
     return failure("Database connection unavailable.");
   }
 
-  const { error } = await supabase
-    .from("contact_leads")
-    .update({ status: handled ? "handled" : "new" })
-    .eq("id", id);
+  try {
+    const { error } = await supabase
+      .from("contact_leads")
+      .update({ status: handled ? "handled" : "new" })
+      .eq("id", id);
 
-  if (error) {
-    return failure(error.message);
+    if (error) {
+      return failure(error.message);
+    }
+  } catch (err) {
+    return failure(err instanceof Error ? err.message : "Database error");
   }
 
   return success(handled ? "Lead marked handled." : "Lead marked unhandled.");
@@ -234,17 +254,22 @@ export async function updateOrderStatusAction(
     return failure("Database connection unavailable.");
   }
 
-  const { error } = await supabase
-    .from("orders")
-    .update({ order_status: status })
-    .eq("id", id);
+  try {
+    const { error } = await supabase
+      .from("orders")
+      .update({ order_status: status })
+      .eq("id", id);
 
-  if (error) {
-    return failure(error.message);
+    if (error) {
+      return failure(error.message);
+    }
+  } catch (err) {
+    return failure(err instanceof Error ? err.message : "Database error");
   }
 
   return success("Order status updated.");
 }
+
 
 export async function uploadImageAction(
   formData: FormData,
