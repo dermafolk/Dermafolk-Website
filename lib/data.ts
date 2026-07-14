@@ -1,6 +1,12 @@
 import { type ContactLead, type HomepageSection, type Order, type Product, type Settings } from "@/lib/types";
 import { createServerSupabaseClient } from "@/lib/supabase";
 
+// Fixed row id for the single site_settings record (see scripts/seed.mjs).
+// Exported (rather than defined in lib/razorpay.ts) so this file - which is
+// imported by client components for fallbackProducts - never pulls in the
+// `server-only`-guarded Razorpay credential helpers.
+export const SETTINGS_ID = "00000000-0000-0000-0000-000000000001";
+
 export const fallbackProducts: Product[] = [
   {
     id: "renewal-serum",
@@ -77,6 +83,8 @@ export const fallbackSettings: Settings = {
   shippingCharge: 0,
   codEnabled: true,
   razorpayEnabled: false,
+  razorpayKeyId: "",
+  razorpayKeySecretConfigured: false,
 };
 
 function mapProductRow(row: any): Product {
@@ -259,7 +267,7 @@ export async function getSiteSettings(): Promise<Settings> {
     const { data, error } = await supabase
       .from("site_settings")
       .select("*")
-      .eq("id", "00000000-0000-0000-0000-000000000001")
+      .eq("id", SETTINGS_ID)
       .maybeSingle();
 
     if (error || !data) return fallbackSettings;
@@ -268,6 +276,8 @@ export async function getSiteSettings(): Promise<Settings> {
       shippingCharge: data.shipping_charge,
       codEnabled: data.cod_enabled,
       razorpayEnabled: data.razorpay_enabled,
+      razorpayKeyId: data.razorpay_key_id ?? "",
+      razorpayKeySecretConfigured: Boolean(data.razorpay_key_secret),
     };
   } catch {
     return fallbackSettings;

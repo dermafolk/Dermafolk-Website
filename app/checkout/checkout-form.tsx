@@ -1,7 +1,8 @@
 "use client";
 
-import { useActionState, useEffect, useMemo, useState } from "react";
+import { useActionState, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import Script from "next/script";
 import {
   ShieldCheck,
   Lock,
@@ -17,7 +18,16 @@ import { useCart } from "@/components/cart-provider";
 import { type Settings } from "@/lib/types";
 import { resolveMediaUrl } from "@/lib/media";
 
-import { createCodOrder, type CheckoutActionState } from "./actions";
+import { createCodOrder, completeRazorpayOrder, startRazorpayOrder, type CheckoutActionState } from "./actions";
+
+declare global {
+  interface Window {
+    Razorpay?: new (options: Record<string, unknown>) => {
+      open: () => void;
+      on: (event: string, handler: (response: unknown) => void) => void;
+    };
+  }
+}
 
 function money(value: number) {
   return `₹${value}`;
@@ -27,9 +37,17 @@ export function CheckoutForm({ settings }: { settings: Settings }) {
   const router = useRouter();
   const { items, subtotal, clearCart } = useCart();
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "razorpay">("cod");
+  const [razorpayBusy, setRazorpayBusy] = useState(false);
+  const [razorpayError, setRazorpayError] = useState("");
+  const razorpayReady = useRef(false);
   const shipping = settings.shippingCharge;
   const total = subtotal + shipping;
   const [state, formAction, pending] = useActionState<CheckoutActionState, FormData>(createCodOrder, {
+    ok: false,
+    message: "",
+    order: null,
+  });
+  const [razorpayState, razorpayFormAction] = useActionState<CheckoutActionState, FormData>(completeRazorpayOrder, {
     ok: false,
     message: "",
     order: null,
@@ -50,6 +68,79 @@ export function CheckoutForm({ settings }: { settings: Settings }) {
       router.push("/order-confirmation");
     }
   }, [clearCart, router, state.ok, state.order]);
+
+  useEffect(() => {
+    if (razorpayState.ok && razorpayState.order) {
+      window.localStorage.setItem("dermafolk-last-order", JSON.stringify(razorpayState.order));
+      clearCart();
+      router.push("/order-confirmation");
+    } else if (!razorpayState.ok && razorpayState.message) {
+      setRazorpayBusy(false);
+      setRazorpayError(razorpayState.message);
+    }
+  }, [clearCart, router, razorpayState.ok, razorpayState.order, razorpayState.message]);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    if (paymentMethod !== "razorpay") return;
+    event.preventDefault();
+
+    const form = event.currentTarget;
+    if (!form.reportValidity()) return;
+    if (!razorpayReady.current || !window.Razorpay) {
+      setRazorpayError("Payment gateway is still loading — please try again in a moment.");
+      return;
+    }
+
+    setRazorpayError("");
+    setRazorpayBusy(true);
+
+    const formData = new FormData(form);
+    const name = String(formData.get("name") ?? "");
+    const email = String(formData.get("email") ?? "");
+    const phone = String(formData.get("phone") ?? "");
+    const address = String(formData.get("address") ?? "");
+    const cartJson = String(formData.get("cartJson") ?? "");
+
+    const order = await startRazorpayOrder(cartJson);
+    if (!order.ok) {
+      setRazorpayBusy(false);
+      setRazorpayError(order.message);
+      return;
+    }
+
+    const rzp = new window.Razorpay({
+      key: order.keyId,
+      amount: order.amount,
+      currency: order.currency,
+      order_id: order.razorpayOrderId,
+      name: "Dermafolk",
+      description: "Renewal Face Wash",
+      prefill: { name, email, contact: phone },
+      theme: { color: "#2A2420" },
+      handler: (response: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) => {
+        const verifyData = new FormData();
+        verifyData.set("razorpayOrderId", response.razorpay_order_id);
+        verifyData.set("razorpayPaymentId", response.razorpay_payment_id);
+        verifyData.set("razorpaySignature", response.razorpay_signature);
+        verifyData.set("name", name);
+        verifyData.set("email", email);
+        verifyData.set("phone", phone);
+        verifyData.set("address", address);
+        verifyData.set("cartJson", cartJson);
+        razorpayFormAction(verifyData);
+      },
+      modal: {
+        ondismiss: () => setRazorpayBusy(false),
+      },
+    });
+
+    rzp.on("payment.failed", () => {
+      setRazorpayBusy(false);
+      setRazorpayError("Payment failed. Please try again or use Cash on Delivery.");
+    });
+
+    rzp.open();
+  }
 
   if (!items.length) {
     return (
@@ -174,6 +265,7 @@ export function CheckoutForm({ settings }: { settings: Settings }) {
           {/* RIGHT SIDE: CHECKOUT FORM (NO SCROLLBAR, CLEAN CARD) */}
           <form
             action={formAction}
+            onSubmit={handleSubmit}
             className="lg:col-span-7 rounded-3xl p-6 sm:p-10 border border-neutral-200/80 dark:border-white/10 bg-white dark:bg-neutral-900 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.08)] order-1 lg:order-2"
             style={{ overflow: "visible", maxHeight: "none" }}
           >
@@ -295,6 +387,7 @@ export function CheckoutForm({ settings }: { settings: Settings }) {
                 </div>
 
                 {/* CARD 2: Razorpay (Instant Online Payment) */}
+                {settings.razorpayEnabled && settings.razorpayKeyId ? (
                 <div
                   onClick={() => setPaymentMethod("razorpay")}
                   className={`cursor-pointer rounded-2xl p-4 sm:p-5 border-2 transition-all flex items-start gap-4 ${
@@ -330,13 +423,14 @@ export function CheckoutForm({ settings }: { settings: Settings }) {
                     </p>
                   </div>
                 </div>
+                ) : null}
               </div>
             </div>
 
             {/* Error message display if any */}
-            {state.message ? (
+            {state.message || razorpayError ? (
               <div className="mt-5 p-4 rounded-xl bg-red-50 text-red-800 dark:bg-red-950/50 dark:text-red-300 border border-red-200 dark:border-red-800/60 font-semibold text-sm">
-                {state.message}
+                {state.message || razorpayError}
               </div>
             ) : null}
 
@@ -344,16 +438,28 @@ export function CheckoutForm({ settings }: { settings: Settings }) {
             <div className="mt-8">
               <Button
                 type="submit"
-                disabled={pending}
+                disabled={pending || razorpayBusy}
                 className="w-full py-4 sm:py-5 px-6 rounded-2xl font-black text-white bg-gradient-to-r from-neutral-900 via-neutral-800 to-black dark:from-white dark:via-neutral-100 dark:to-neutral-200 dark:text-neutral-950 shadow-[0_15px_30px_-5px_rgba(0,0,0,0.35)] hover:shadow-[0_20px_40px_-5px_rgba(0,0,0,0.45)] hover:opacity-95 transition-all flex items-center justify-center gap-2.5 text-base sm:text-xl transform active:scale-[0.99] h-auto"
               >
                 <span>
-                  {pending
-                    ? "Processing Order..."
-                    : `Place Order — ${money(total)} →`}
+                  {pending || razorpayBusy
+                    ? "Processing..."
+                    : paymentMethod === "razorpay"
+                      ? `Pay Now — ${money(total)} →`
+                      : `Place Order — ${money(total)} →`}
                 </span>
               </Button>
             </div>
+
+            {settings.razorpayEnabled && settings.razorpayKeyId ? (
+              <Script
+                src="https://checkout.razorpay.com/v1/checkout.js"
+                strategy="afterInteractive"
+                onLoad={() => {
+                  razorpayReady.current = true;
+                }}
+              />
+            ) : null}
 
             {/* SECURE PAYMENT LOGOS FOOTER INSIDE FORM */}
             <div className="mt-6 pt-6 border-t border-neutral-100 dark:border-white/10 text-center">

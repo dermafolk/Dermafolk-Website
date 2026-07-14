@@ -24,7 +24,7 @@ export function SettingsForm({ settings }: { settings: Settings }) {
     <section className="admin-stack">
       <div className="admin-card">
         <h2>Shipping and Payment Settings</h2>
-        <p>Razorpay is disabled by default (out of scope). COD and shipping charge are live.</p>
+        <p>COD, shipping charge and Razorpay online payments.</p>
       </div>
 
       <div className="admin-card">
@@ -53,8 +53,35 @@ export function SettingsForm({ settings }: { settings: Settings }) {
               name="razorpayEnabled"
               defaultChecked={settings.razorpayEnabled}
             />
-            <span>Razorpay enabled (out of scope — leave disabled)</span>
+            <span>Razorpay enabled</span>
           </label>
+
+          <div className="field">
+            <label>Razorpay Key ID</label>
+            <input
+              name="razorpayKeyId"
+              type="text"
+              defaultValue={settings.razorpayKeyId}
+              placeholder="rzp_live_..."
+              autoComplete="off"
+            />
+          </div>
+
+          <div className="field">
+            <label>Razorpay Key Secret</label>
+            <input
+              name="razorpayKeySecret"
+              type="password"
+              defaultValue=""
+              placeholder={settings.razorpayKeySecretConfigured ? "•••••••••••• (saved — leave blank to keep)" : "Paste your Razorpay key secret"}
+              autoComplete="off"
+            />
+            <p className="desc" style={{ marginTop: "6px" }}>
+              {settings.razorpayKeySecretConfigured
+                ? "A key secret is currently saved. It's never shown here or sent to the browser — leave this blank to keep it unchanged, or paste a new one to replace it."
+                : "No key secret saved yet. This value stays server-side only and is never exposed to customers."}
+            </p>
+          </div>
 
           {state.message ? (
             <p className="desc" style={{ color: state.ok ? "#1a7f37" : "#b3261e" }}>

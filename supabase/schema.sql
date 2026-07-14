@@ -65,8 +65,14 @@ create table if not exists site_settings (
   shipping_charge integer not null default 0,
   cod_enabled boolean not null default true,
   razorpay_enabled boolean not null default false,
+  razorpay_key_id text,
+  razorpay_key_secret text,
   updated_at timestamptz not null default now()
 );
+
+-- Migration for existing databases that already have site_settings:
+-- alter table site_settings add column if not exists razorpay_key_id text;
+-- alter table site_settings add column if not exists razorpay_key_secret text;
 
 create table if not exists profiles (
   id uuid primary key,

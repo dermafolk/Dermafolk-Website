@@ -3,7 +3,7 @@
 import { getAdminSession } from "@/lib/admin-auth";
 import { createServerSupabaseClient } from "@/lib/supabase";
 import { uploadProductImage } from "@/lib/media";
-import { deleteMemoryLead, updateMemoryLeadStatus } from "@/lib/data";
+import { deleteMemoryLead, updateMemoryLeadStatus, SETTINGS_ID } from "@/lib/data";
 import {
   homepageSectionSchema,
   productInputSchema,
@@ -137,6 +137,8 @@ export async function saveSettingsAction(
     shippingCharge: formData.get("shippingCharge"),
     codEnabled: formData.get("codEnabled") === "on" || formData.get("codEnabled") === "true",
     razorpayEnabled: formData.get("razorpayEnabled") === "on" || formData.get("razorpayEnabled") === "true",
+    razorpayKeyId: formData.get("razorpayKeyId"),
+    razorpayKeySecret: formData.get("razorpayKeySecret"),
   });
 
   if (!parsed.success) {
@@ -146,11 +148,21 @@ export async function saveSettingsAction(
   const supabase = createServerSupabaseClient();
   if (supabase) {
     try {
-      const { error } = await supabase.from("site_settings").upsert({
+      const payload: Record<string, unknown> = {
+        id: SETTINGS_ID,
         shipping_charge: parsed.data.shippingCharge,
         cod_enabled: parsed.data.codEnabled,
         razorpay_enabled: parsed.data.razorpayEnabled,
-      });
+        razorpay_key_id: parsed.data.razorpayKeyId || null,
+      };
+
+      // Only touch the secret column if a new value was actually entered -
+      // an empty field means "keep whatever is already saved".
+      if (parsed.data.razorpayKeySecret) {
+        payload.razorpay_key_secret = parsed.data.razorpayKeySecret;
+      }
+
+      const { error } = await supabase.from("site_settings").upsert(payload, { onConflict: "id" });
 
       if (error) {
         return failure(error.message);

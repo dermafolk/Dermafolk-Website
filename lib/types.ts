@@ -55,4 +55,8 @@ export type Settings = {
   shippingCharge: number;
   codEnabled: boolean;
   razorpayEnabled: boolean;
+  // Razorpay key_id is not a secret (Razorpay's own Checkout.js needs it in the browser).
+  razorpayKeyId: string;
+  // The key_secret itself is never included here - only whether one is saved server-side.
+  razorpayKeySecretConfigured: boolean;
 };

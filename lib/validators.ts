@@ -57,4 +57,18 @@ export const settingsSchema = z.object({
   shippingCharge: z.coerce.number().int().nonnegative(),
   codEnabled: z.coerce.boolean(),
   razorpayEnabled: z.coerce.boolean(),
+  razorpayKeyId: z.string().trim().optional(),
+  // Empty string means "leave the currently saved secret unchanged".
+  razorpayKeySecret: z.string().trim().optional(),
+});
+
+export const razorpayVerifySchema = z.object({
+  razorpayOrderId: z.string().trim().min(1),
+  razorpayPaymentId: z.string().trim().min(1),
+  razorpaySignature: z.string().trim().min(1),
+  name: z.string().trim().min(2, "Enter a name."),
+  email: z.string().trim().email("Enter a valid email."),
+  phone: z.string().trim().min(7, "Enter a valid phone number."),
+  address: z.string().trim().min(10, "Enter a delivery address."),
+  cartJson: z.string().trim().min(2, "Cart is empty."),
 });
