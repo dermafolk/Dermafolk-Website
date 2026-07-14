@@ -109,7 +109,7 @@ export default function AboutPage() {
           <div className="about-promise-card">
             <div className="about-promise-image-box">
               <img
-                src="/assets/lower_left_image.png"
+                src="/assets/lower_left_image.webp"
                 alt="Dermafolk skincare texture and botanical ingredients"
               />
             </div>
