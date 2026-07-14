@@ -51,14 +51,6 @@ export default function ContactPage() {
                 <div className="contact-location-section">
                   <div className="contact-info-label">Studio Location</div>
                   <div className="contact-location-text">Nanded, MH, India</div>
-                  <div className="contact-map">
-                    <iframe
-                      title="Studio location map"
-                      src="https://www.google.com/maps?q=19.1531527,77.327648&z=17&hl=en&output=embed"
-                      loading="lazy"
-                      referrerPolicy="no-referrer-when-downgrade"
-                    />
-                  </div>
                 </div>
               </div>
             </div>
