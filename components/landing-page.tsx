@@ -4,7 +4,7 @@ import { type HTMLAttributes, useEffect, useState } from "react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import { type HomepageSection } from "@/lib/types";
+import { type HomepageSection, type Product } from "@/lib/types";
 import { SiteShell } from "@/components/site-shell";
 import { useCart } from "@/components/cart-provider";
 import { fallbackProducts } from "@/lib/data";
@@ -63,12 +63,12 @@ function MaterialIcon({
   );
 }
 
-function PriceLine() {
+function PriceLine({ product }: { product: Product }) {
   return (
     <div className="price-line">
-      <span className="mrp">₹799</span>
-      <span className="price">₹495</span>
-      <span className="off">38% OFF</span>
+      <span className="mrp">₹{product.mrp}</span>
+      <span className="price">₹{product.price}</span>
+      <span className="off">{product.discountPercent}% OFF</span>
     </div>
   );
 }
@@ -263,12 +263,12 @@ const heroTitleFallback = "Brighter, calmer skin in one honest step.";
 const heroBodyFallback =
   "Glutathione, niacinamide and mandelic acid, in a single fragrance-free face wash built to even tone and soften texture - without the ten-step routine.";
 
-export function LandingPage({ hero }: { hero?: HomepageSection }) {
+export function LandingPage({ hero, product }: { hero?: HomepageSection; product?: Product }) {
   const [reviewOpen, setReviewOpen] = useState(false);
   const [reviews, setReviews] = useState<Review[]>(reviewsSeed);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const { addItem } = useCart();
-  const defaultProduct = fallbackProducts[0];
+  const defaultProduct = product ?? fallbackProducts[0];
 
   const heroTitle = hero?.title || heroTitleFallback;
   const heroBody = hero?.body || heroBodyFallback;
@@ -281,7 +281,7 @@ export function LandingPage({ hero }: { hero?: HomepageSection }) {
           <div className="kicker">Dermafolk - One Bottle Renewal</div>
           <h1>{heroTitle}</h1>
           <p>{heroBody}</p>
-          <PriceLine />
+          <PriceLine product={defaultProduct} />
           <div className="hero-actions">
             <Button
               className="btn btn-primary"
@@ -290,7 +290,7 @@ export function LandingPage({ hero }: { hero?: HomepageSection }) {
                 addItem(defaultProduct, 1, { type: "buynow", openPopup: true });
               }}
             >
-              Buy Now - ₹495
+              Buy Now - ₹{defaultProduct.price}
             </Button>
             <Button asChild className="btn btn-outline on-dark">
               <Link href="/shop">View Product</Link>
@@ -317,16 +317,16 @@ export function LandingPage({ hero }: { hero?: HomepageSection }) {
           <div className="product-visual">
             <img src="/assets/product-image.webp" alt="Dermafolk product bottle on a stone tray with a folded towel and aloe vera" />
             <div className="price-tag">
-              <span className="mrp">₹799</span>
-              <span className="amt">₹495</span>
-              <span className="txt">38% OFF</span>
+              <span className="mrp">₹{defaultProduct.mrp}</span>
+              <span className="amt">₹{defaultProduct.price}</span>
+              <span className="txt">{defaultProduct.discountPercent}% OFF</span>
             </div>
           </div>
           <div className="product-info">
             <div className="kicker">The Product</div>
             <h2>Dermafolk Renewal Face Wash</h2>
             <p className="desc">A single fragrance-free face wash formulated at clinical concentrations - built to brighten, hydrate and gently resurface, so it&apos;s the only step your skin actually asks for.</p>
-            <PriceLine />
+            <PriceLine product={defaultProduct} />
             <ul className="product-facts">
               <li><MaterialIcon>science</MaterialIcon> 5 active ingredients, clinically dosed</li>
               <li><MaterialIcon>water_drop</MaterialIcon> 120ml - lasts 20 to 24 weeks</li>
@@ -344,7 +344,7 @@ export function LandingPage({ hero }: { hero?: HomepageSection }) {
                   addItem(defaultProduct, 1, { type: "buynow", openPopup: true });
                 }}
               >
-                Buy Now - ₹495
+                Buy Now - ₹{defaultProduct.price}
               </Button>
             </div>
           </div>
@@ -452,7 +452,7 @@ export function LandingPage({ hero }: { hero?: HomepageSection }) {
             <div className="kicker">Try It Risk-Free</div>
             <h2>45 days to fall in love with one bottle.</h2>
             <p>Free pan-India shipping on every order, and a full refund if it isn&apos;t the last face wash you ever buy.</p>
-            <PriceLine />
+            <PriceLine product={defaultProduct} />
             <Button
               className="btn btn-primary"
               type="button"
@@ -460,7 +460,7 @@ export function LandingPage({ hero }: { hero?: HomepageSection }) {
                 addItem(defaultProduct, 1, { type: "buynow", openPopup: true });
               }}
             >
-              Buy Now - ₹495
+              Buy Now - ₹{defaultProduct.price}
             </Button>
           </div>
         </div>

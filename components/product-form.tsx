@@ -144,7 +144,7 @@ export function ProductForm({ product }: { product?: Product }) {
               min={0}
               step={1}
               defaultValue={product?.price ?? ""}
-              placeholder="495"
+              placeholder="499"
               required
             />
           </div>

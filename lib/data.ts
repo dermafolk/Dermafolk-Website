@@ -14,7 +14,7 @@ export const fallbackProducts: Product[] = [
     name: "Dermafolk Renewal Face Wash",
     description:
       "A single fragrance-free face wash formulated at clinical concentrations built to brighten, hydrate and gently resurface.",
-    price: 495,
+    price: 499,
     mrp: 799,
     discountPercent: 38,
     images: [
