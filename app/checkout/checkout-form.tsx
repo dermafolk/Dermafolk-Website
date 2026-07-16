@@ -375,44 +375,7 @@ export function CheckoutForm({ settings }: { settings: Settings }) {
               </div>
 
               <div className="grid grid-cols-1 gap-3.5">
-                {/* CARD 1: Cash on Delivery (COD) */}
-                <div
-                  onClick={() => setPaymentMethod("cod")}
-                  className={`cursor-pointer rounded-2xl p-4 sm:p-5 border-2 transition-all flex items-start gap-4 ${
-                    paymentMethod === "cod"
-                      ? "border-neutral-900 bg-neutral-900/[0.04] dark:border-white dark:bg-white/[0.06] shadow-md"
-                      : "border-neutral-200 dark:border-white/10 hover:border-neutral-400 dark:hover:border-white/30 bg-white dark:bg-neutral-900"
-                  }`}
-                >
-                  <div
-                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
-                      paymentMethod === "cod"
-                        ? "border-neutral-900 bg-neutral-900 dark:border-white dark:bg-white text-white dark:text-neutral-900"
-                        : "border-neutral-300 dark:border-neutral-600"
-                    }`}
-                  >
-                    {paymentMethod === "cod" && <Check className="w-3 h-3 stroke-[3]" />}
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-2 flex-wrap">
-                      <div className="flex items-center gap-2">
-                        <Banknote className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                        <span className="font-extrabold text-base text-neutral-900 dark:text-white">
-                          Cash on Delivery (COD)
-                        </span>
-                      </div>
-                      <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300">
-                        Zero Extra Charge
-                      </span>
-                    </div>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 font-medium">
-                      Pay via Cash or UPI upon delivery.
-                    </p>
-                  </div>
-                </div>
-
-                {/* CARD 2: Razorpay (Instant Online Payment) */}
+                {/* CARD 1: Razorpay (Instant Online Payment) */}
                 {settings.razorpayEnabled && settings.razorpayKeyId ? (
                 <div
                   onClick={() => setPaymentMethod("razorpay")}
@@ -450,6 +413,43 @@ export function CheckoutForm({ settings }: { settings: Settings }) {
                   </div>
                 </div>
                 ) : null}
+
+                {/* CARD 2: Cash on Delivery (COD) */}
+                <div
+                  onClick={() => setPaymentMethod("cod")}
+                  className={`cursor-pointer rounded-2xl p-4 sm:p-5 border-2 transition-all flex items-start gap-4 ${
+                    paymentMethod === "cod"
+                      ? "border-neutral-900 bg-neutral-900/[0.04] dark:border-white dark:bg-white/[0.06] shadow-md"
+                      : "border-neutral-200 dark:border-white/10 hover:border-neutral-400 dark:hover:border-white/30 bg-white dark:bg-neutral-900"
+                  }`}
+                >
+                  <div
+                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
+                      paymentMethod === "cod"
+                        ? "border-neutral-900 bg-neutral-900 dark:border-white dark:bg-white text-white dark:text-neutral-900"
+                        : "border-neutral-300 dark:border-neutral-600"
+                    }`}
+                  >
+                    {paymentMethod === "cod" && <Check className="w-3 h-3 stroke-[3]" />}
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2 flex-wrap">
+                      <div className="flex items-center gap-2">
+                        <Banknote className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                        <span className="font-extrabold text-base text-neutral-900 dark:text-white">
+                          Cash on Delivery (COD)
+                        </span>
+                      </div>
+                      <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300">
+                        Zero Extra Charge
+                      </span>
+                    </div>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 font-medium">
+                      Pay via Cash or UPI upon delivery.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
 
