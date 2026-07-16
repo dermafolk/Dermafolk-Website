@@ -1,5 +1,7 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+
 import { getAdminSession } from "@/lib/admin-auth";
 import { createServerSupabaseClient } from "@/lib/supabase";
 import { uploadProductImage } from "@/lib/media";
@@ -84,6 +86,10 @@ export async function saveProductAction(
     }
   }
 
+  // The homepage is ISR-cached (revalidate = 3600) - without this, a price
+  // or product edit here wouldn't show up there for up to an hour.
+  revalidatePath("/");
+
   return success("Product saved.");
 }
 
@@ -121,6 +127,8 @@ export async function saveHomepageSectionAction(
       return failure(err instanceof Error ? err.message : "Database error");
     }
   }
+
+  revalidatePath("/");
 
   return success("Homepage section saved.");
 }
@@ -205,6 +213,8 @@ export async function deleteProductAction(
   } catch (err) {
     return failure(err instanceof Error ? err.message : "Database error");
   }
+
+  revalidatePath("/");
 
   return success("Product deleted.");
 }
