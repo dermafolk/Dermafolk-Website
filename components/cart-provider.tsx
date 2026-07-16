@@ -74,11 +74,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setPopupState((current) => ({ ...current, isOpen: false }));
   }, []);
 
-  const value = useMemo<CartContextValue>(() => ({
-    items,
-    subtotal: items.reduce((total, item) => total + item.price * item.qty, 0),
-    popupState,
-    addItem(product, qty = 1, options = {}) {
+  // Each cart method is its own stable useCallback rather than an inline
+  // property on a single `items`-dependent useMemo. Previously, calling
+  // clearCart() changed `items`, which recreated every method (including
+  // clearCart itself) with a new identity - any effect elsewhere that
+  // depended on `clearCart` (e.g. the checkout success handler) would then
+  // re-fire, call clearCart() again, and loop forever ("Maximum update
+  // depth exceeded", freezing the app right after checkout).
+  const addItem = useCallback(
+    (
+      product: Product,
+      qty = 1,
+      options: { type?: "bag" | "buynow"; openPopup?: boolean } = {},
+    ) => {
       const addedItem: CartItem = {
         productId: product.id,
         slug: product.slug,
@@ -112,20 +120,27 @@ export function CartProvider({ children }: { children: ReactNode }) {
         });
       }
     },
-    updateItem(productId, qty) {
-      setItems((current) =>
-        current
-          .map((item) => (item.productId === productId ? { ...item, qty } : item))
-          .filter((item) => item.qty > 0),
-      );
-    },
-    removeItem(productId) {
-      setItems((current) => current.filter((item) => item.productId !== productId));
-    },
-    clearCart() {
-      setItems([]);
-    },
-    openPopup(type, item) {
+    [router],
+  );
+
+  const updateItem = useCallback((productId: string, qty: number) => {
+    setItems((current) =>
+      current
+        .map((item) => (item.productId === productId ? { ...item, qty } : item))
+        .filter((item) => item.qty > 0),
+    );
+  }, []);
+
+  const removeItem = useCallback((productId: string) => {
+    setItems((current) => current.filter((item) => item.productId !== productId));
+  }, []);
+
+  const clearCart = useCallback(() => {
+    setItems([]);
+  }, []);
+
+  const openPopup = useCallback(
+    (type: "bag" | "buynow", item?: CartItem) => {
       if (type === "buynow") {
         setPopupState((current) => ({ ...current, isOpen: false }));
         router.push("/checkout");
@@ -137,10 +152,26 @@ export function CartProvider({ children }: { children: ReactNode }) {
         lastAdded: item ?? items[0] ?? null,
       });
     },
-    closePopup,
-  }), [items, popupState, closePopup, router]);
+    [router, items],
+  );
 
+  const subtotal = useMemo(() => items.reduce((total, item) => total + item.price * item.qty, 0), [items]);
   const totalQty = useMemo(() => items.reduce((total, item) => total + item.qty, 0), [items]);
+
+  const value = useMemo<CartContextValue>(
+    () => ({
+      items,
+      subtotal,
+      popupState,
+      addItem,
+      updateItem,
+      removeItem,
+      clearCart,
+      openPopup,
+      closePopup,
+    }),
+    [items, subtotal, popupState, addItem, updateItem, removeItem, clearCart, openPopup, closePopup],
+  );
 
   return (
     <CartContext.Provider value={value}>
