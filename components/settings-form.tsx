@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useActionState } from "react";
+import { useEffect, useState, useActionState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 
@@ -9,10 +9,15 @@ import { saveSettingsAction } from "@/app/admin/actions";
 
 export function SettingsForm({ settings }: { settings: Settings }) {
   const router = useRouter();
+  const [origin, setOrigin] = useState("");
   const [state, formAction, pending] = useActionState(saveSettingsAction, {
     ok: false,
     message: "",
   });
+
+  useEffect(() => {
+    setOrigin(window.location.origin);
+  }, []);
 
   useEffect(() => {
     if (state.ok) {
@@ -80,6 +85,28 @@ export function SettingsForm({ settings }: { settings: Settings }) {
               {settings.razorpayKeySecretConfigured
                 ? "A key secret is currently saved. It's never shown here or sent to the browser — leave this blank to keep it unchanged, or paste a new one to replace it."
                 : "No key secret saved yet. This value stays server-side only and is never exposed to customers."}
+            </p>
+          </div>
+
+          <div className="field">
+            <label>Razorpay Webhook Secret</label>
+            <input
+              name="razorpayWebhookSecret"
+              type="password"
+              defaultValue=""
+              placeholder={settings.razorpayWebhookSecretConfigured ? "•••••••••••• (saved — leave blank to keep)" : "Paste the webhook secret you set in Razorpay"}
+              autoComplete="off"
+            />
+            <p className="desc" style={{ marginTop: "6px" }}>
+              In your{" "}
+              <a href="https://dashboard.razorpay.com/app/webhooks" target="_blank" rel="noreferrer">
+                Razorpay Dashboard → Webhooks
+              </a>
+              , add a webhook with URL{" "}
+              <code style={{ userSelect: "all" }}>{origin || "https://your-domain.com"}/api/webhooks/razorpay</code>,
+              enable the <strong>payment.captured</strong> event, set your own secret there, then paste that same
+              secret here. This lets Razorpay confirm a payment even if the customer&apos;s browser closes before
+              checkout finishes.
             </p>
           </div>
 

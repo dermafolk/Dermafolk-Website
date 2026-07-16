@@ -48,6 +48,8 @@ export type Order = {
   paymentMethod: "cod" | "razorpay";
   paymentStatus: "pending" | "paid" | "failed";
   orderStatus: "draft" | "placed" | "fulfilled" | "cancelled";
+  razorpayOrderId?: string;
+  razorpayPaymentId?: string;
   createdAt: string;
 };
 
@@ -57,6 +59,7 @@ export type Settings = {
   razorpayEnabled: boolean;
   // Razorpay key_id is not a secret (Razorpay's own Checkout.js needs it in the browser).
   razorpayKeyId: string;
-  // The key_secret itself is never included here - only whether one is saved server-side.
+  // The key_secret and webhook secret are never included here - only whether one is saved server-side.
   razorpayKeySecretConfigured: boolean;
+  razorpayWebhookSecretConfigured: boolean;
 };

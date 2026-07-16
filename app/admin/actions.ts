@@ -139,6 +139,7 @@ export async function saveSettingsAction(
     razorpayEnabled: formData.get("razorpayEnabled") === "on" || formData.get("razorpayEnabled") === "true",
     razorpayKeyId: formData.get("razorpayKeyId"),
     razorpayKeySecret: formData.get("razorpayKeySecret"),
+    razorpayWebhookSecret: formData.get("razorpayWebhookSecret"),
   });
 
   if (!parsed.success) {
@@ -156,10 +157,13 @@ export async function saveSettingsAction(
         razorpay_key_id: parsed.data.razorpayKeyId || null,
       };
 
-      // Only touch the secret column if a new value was actually entered -
+      // Only touch the secret columns if a new value was actually entered -
       // an empty field means "keep whatever is already saved".
       if (parsed.data.razorpayKeySecret) {
         payload.razorpay_key_secret = parsed.data.razorpayKeySecret;
+      }
+      if (parsed.data.razorpayWebhookSecret) {
+        payload.razorpay_webhook_secret = parsed.data.razorpayWebhookSecret;
       }
 
       const { error } = await supabase.from("site_settings").upsert(payload, { onConflict: "id" });

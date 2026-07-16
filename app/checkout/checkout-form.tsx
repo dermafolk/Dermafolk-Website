@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
+import { useActionState, useEffect, useMemo, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Script from "next/script";
 import {
@@ -33,13 +33,29 @@ function money(value: number) {
   return `₹${value}`;
 }
 
+function waitForRazorpay(timeoutMs = 10000): Promise<boolean> {
+  if (typeof window !== "undefined" && window.Razorpay) return Promise.resolve(true);
+
+  return new Promise((resolve) => {
+    const start = Date.now();
+    const interval = window.setInterval(() => {
+      if (window.Razorpay) {
+        window.clearInterval(interval);
+        resolve(true);
+      } else if (Date.now() - start > timeoutMs) {
+        window.clearInterval(interval);
+        resolve(false);
+      }
+    }, 100);
+  });
+}
+
 export function CheckoutForm({ settings }: { settings: Settings }) {
   const router = useRouter();
   const { items, subtotal, clearCart } = useCart();
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "razorpay">("cod");
   const [razorpayBusy, setRazorpayBusy] = useState(false);
   const [razorpayError, setRazorpayError] = useState("");
-  const razorpayReady = useRef(false);
   const shipping = settings.shippingCharge;
   const total = subtotal + shipping;
   const [state, formAction, pending] = useActionState<CheckoutActionState, FormData>(createCodOrder, {
@@ -86,10 +102,6 @@ export function CheckoutForm({ settings }: { settings: Settings }) {
 
     const form = event.currentTarget;
     if (!form.reportValidity()) return;
-    if (!razorpayReady.current || !window.Razorpay) {
-      setRazorpayError("Payment gateway is still loading — please try again in a moment.");
-      return;
-    }
 
     setRazorpayError("");
     setRazorpayBusy(true);
@@ -101,7 +113,21 @@ export function CheckoutForm({ settings }: { settings: Settings }) {
     const address = String(formData.get("address") ?? "");
     const cartJson = String(formData.get("cartJson") ?? "");
 
-    const order = await startRazorpayOrder(cartJson);
+    // Run the order-creation API call and the Razorpay script load in
+    // parallel, and actually wait for the script rather than failing
+    // immediately if it hasn't finished loading yet (it's an external
+    // script, so its load time varies with the customer's network).
+    const [order, scriptReady] = await Promise.all([
+      startRazorpayOrder({ name, email, phone, address, cartJson }),
+      waitForRazorpay(),
+    ]);
+
+    if (!scriptReady || !window.Razorpay) {
+      setRazorpayBusy(false);
+      setRazorpayError("Could not load the payment gateway. Please check your connection and try again.");
+      return;
+    }
+
     if (!order.ok) {
       setRazorpayBusy(false);
       setRazorpayError(order.message);
@@ -452,13 +478,7 @@ export function CheckoutForm({ settings }: { settings: Settings }) {
             </div>
 
             {settings.razorpayEnabled && settings.razorpayKeyId ? (
-              <Script
-                src="https://checkout.razorpay.com/v1/checkout.js"
-                strategy="afterInteractive"
-                onLoad={() => {
-                  razorpayReady.current = true;
-                }}
-              />
+              <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
             ) : null}
 
             {/* SECURE PAYMENT LOGOS FOOTER INSIDE FORM */}

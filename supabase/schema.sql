@@ -48,6 +48,8 @@ create table if not exists orders (
   payment_method text not null,
   payment_status text not null default 'pending',
   order_status text not null default 'placed',
+  razorpay_order_id text unique,
+  razorpay_payment_id text,
   created_at timestamptz not null default now()
 );
 
@@ -67,12 +69,16 @@ create table if not exists site_settings (
   razorpay_enabled boolean not null default false,
   razorpay_key_id text,
   razorpay_key_secret text,
+  razorpay_webhook_secret text,
   updated_at timestamptz not null default now()
 );
 
--- Migration for existing databases that already have site_settings:
+-- Migration for existing databases that already have site_settings and orders:
 -- alter table site_settings add column if not exists razorpay_key_id text;
 -- alter table site_settings add column if not exists razorpay_key_secret text;
+-- alter table site_settings add column if not exists razorpay_webhook_secret text;
+-- alter table orders add column if not exists razorpay_order_id text unique;
+-- alter table orders add column if not exists razorpay_payment_id text;
 
 create table if not exists profiles (
   id uuid primary key,

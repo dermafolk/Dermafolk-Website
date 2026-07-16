@@ -85,6 +85,7 @@ export const fallbackSettings: Settings = {
   razorpayEnabled: false,
   razorpayKeyId: "",
   razorpayKeySecretConfigured: false,
+  razorpayWebhookSecretConfigured: false,
 };
 
 function mapProductRow(row: any): Product {
@@ -226,6 +227,9 @@ export async function getOrders(): Promise<Order[]> {
     const { data, error } = await supabase
       .from("orders")
       .select("*, order_items(*)")
+      // "draft" rows are Razorpay payment attempts that never completed
+      // (customer closed the popup, payment failed, etc.) - not real orders.
+      .neq("order_status", "draft")
       .order("created_at", { ascending: false });
 
     if (error || !data) return fallbackOrders;
@@ -252,6 +256,8 @@ export async function getOrders(): Promise<Order[]> {
       paymentMethod: row.payment_method,
       paymentStatus: row.payment_status,
       orderStatus: row.order_status,
+      razorpayOrderId: row.razorpay_order_id ?? undefined,
+      razorpayPaymentId: row.razorpay_payment_id ?? undefined,
       createdAt: row.created_at,
     }));
   } catch {
@@ -278,6 +284,7 @@ export async function getSiteSettings(): Promise<Settings> {
       razorpayEnabled: data.razorpay_enabled,
       razorpayKeyId: data.razorpay_key_id ?? "",
       razorpayKeySecretConfigured: Boolean(data.razorpay_key_secret),
+      razorpayWebhookSecretConfigured: Boolean(data.razorpay_webhook_secret),
     };
   } catch {
     return fallbackSettings;

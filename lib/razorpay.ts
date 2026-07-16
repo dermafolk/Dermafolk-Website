@@ -33,7 +33,11 @@ export type RazorpayOrderResult =
   | { error: string }
   | { keyId: string; orderId: string; amount: number; currency: string };
 
-export async function createRazorpayOrder(amountInPaise: number, receipt: string): Promise<RazorpayOrderResult> {
+export async function createRazorpayOrder(
+  amountInPaise: number,
+  receipt: string,
+  notes?: Record<string, string>,
+): Promise<RazorpayOrderResult> {
   const credentials = await getRazorpayCredentials();
   if (!credentials) {
     return { error: "Razorpay is not configured." };
@@ -51,6 +55,7 @@ export async function createRazorpayOrder(amountInPaise: number, receipt: string
       amount: amountInPaise,
       currency: "INR",
       receipt,
+      notes,
     }),
   });
 
@@ -78,9 +83,38 @@ export async function verifyRazorpaySignature(orderId: string, paymentId: string
     .update(`${orderId}|${paymentId}`)
     .digest("hex");
 
-  const expectedBuffer = Buffer.from(expected);
-  const signatureBuffer = Buffer.from(signature);
-  if (expectedBuffer.length !== signatureBuffer.length) return false;
+  return safeEqualHex(expected, signature);
+}
 
-  return timingSafeEqual(expectedBuffer, signatureBuffer);
+function safeEqualHex(expectedHex: string, actualHex: string) {
+  const expectedBuffer = Buffer.from(expectedHex);
+  const actualBuffer = Buffer.from(actualHex);
+  if (expectedBuffer.length !== actualBuffer.length) return false;
+  return timingSafeEqual(expectedBuffer, actualBuffer);
+}
+
+// The webhook signature is a distinct secret configured separately in the
+// Razorpay dashboard's Webhooks section - not the same as key_secret.
+async function getRazorpayWebhookSecret(): Promise<string | null> {
+  const supabase = createServerSupabaseClient();
+  if (!supabase) return null;
+
+  const { data, error } = await supabase
+    .from("site_settings")
+    .select("razorpay_webhook_secret")
+    .eq("id", SETTINGS_ID)
+    .maybeSingle();
+
+  if (error || !data?.razorpay_webhook_secret) return null;
+  return data.razorpay_webhook_secret;
+}
+
+// `rawBody` must be the exact, unparsed request body - the signature is an
+// HMAC over the raw bytes, so parsing to JSON first would break verification.
+export async function verifyRazorpayWebhookSignature(rawBody: string, signature: string): Promise<boolean> {
+  const secret = await getRazorpayWebhookSecret();
+  if (!secret) return false;
+
+  const expected = createHmac("sha256", secret).update(rawBody).digest("hex");
+  return safeEqualHex(expected, signature);
 }

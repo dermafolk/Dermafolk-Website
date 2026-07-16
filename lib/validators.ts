@@ -51,6 +51,8 @@ export const orderSchema = z.object({
   paymentMethod: z.enum(["cod", "razorpay"]),
   paymentStatus: z.enum(["pending", "paid", "failed"]),
   orderStatus: z.enum(["draft", "placed", "fulfilled", "cancelled"]),
+  razorpayOrderId: z.string().trim().optional(),
+  razorpayPaymentId: z.string().trim().optional(),
 });
 
 export const settingsSchema = z.object({
@@ -60,6 +62,7 @@ export const settingsSchema = z.object({
   razorpayKeyId: z.string().trim().optional(),
   // Empty string means "leave the currently saved secret unchanged".
   razorpayKeySecret: z.string().trim().optional(),
+  razorpayWebhookSecret: z.string().trim().optional(),
 });
 
 export const razorpayVerifySchema = z.object({
